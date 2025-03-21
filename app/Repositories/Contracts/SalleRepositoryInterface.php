@@ -1,0 +1,13 @@
+<?php
+
+namespace App\Repositories\Contracts;
+
+interface SalleRepositoryInterface
+{
+    public function getAvailableSalles();
+    public function create(array $data);
+    public function find($id);
+    public function update( array $data ,$id);
+    public function delete($id);
+}
+

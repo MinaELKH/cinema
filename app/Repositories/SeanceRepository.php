@@ -1,38 +1,42 @@
 <?php
-namespace App\Repositories;
-use App\Models\Salle;
-use App\Repositories\Contracts\SalleRepositoryInterface;
 
-class SeanceRepository implements SalleRepositoryInterface
+namespace App\Repositories;
+
+use App\Models\Film;
+use App\Models\Seance;
+use App\Repositories\Contracts\SeanceRepositoryInterface;
+
+class SeanceRepository implements SeanceRepositoryInterface
 {
     public function getAll()
     {
-        return Salle::all();
-    }
-    public function getAvailableSalles()
-    {
-        // TODO: Implement getAvailableSalles() method.
+        return Seance::all();
     }
 
-    public function find($id)
+    public function findById($id)
     {
-        return salle::find() ;
+        return Seance::findOrFail($id);
     }
 
-    public function create(array $data){
-        return Salle::create($data);
+    public function create(array $data)
+    {
+        $film = Film::findOrFail($data['film_id']);
+        return $film->salles()->attach($data['salle_id'], [
+            'start_time' => $data['start_time'],
+            'session' => $data['session'],
+            'langue' => $data['langue']
+        ]);
     }
-    public function update(array $data, $id){
-        $salle = Salle::find($id) ;
-        if($salle){
-             $salle->updated($data);
-        }
-        return $salle;
+
+    public function update($id, array $data)
+    {
+        $seance = $this->findById($id);
+        $seance->update($data);
+        return $seance;
     }
-    public function delete($id){
-        $salle = Salle::find($id);
-        if($salle){
-            $salle->delete();
-        }
+
+    public function delete($id)
+    {
+        return Seance::destroy($id);
     }
 }

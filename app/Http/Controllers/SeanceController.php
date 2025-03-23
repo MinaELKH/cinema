@@ -3,63 +3,36 @@
 namespace App\Http\Controllers;
 
 use App\Models\Seance;
+use App\Services\SeanceService;
 use Illuminate\Http\Request;
 
 class SeanceController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    protected $seanceService;
+
+    public function __construct(SeanceService $seanceService)
+    {
+        $this->seanceService = $seanceService;
+    }
+
     public function index()
     {
-        //
+        return response()->json($this->seanceService->getAllSeances());
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
-    }
+        $validated = $request->validate([
+            'film_id' => 'required|exists:films,id',
+            'salle_id' => 'required|exists:salles,id',
+            'start_time' => 'required|date',
+            'session' => 'required|string',
+            'langue' => 'required|string',
+            'type_seance' => 'required|in:Normale,VIP',
+        ]);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Seance $seance)
-    {
-        //
-    }
+        $seance = $this->seanceService->createSeance($validated);
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Seance $seance)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Seance $seance)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Seance $seance)
-    {
-        //
+        return response()->json($seance, 201);
     }
 }

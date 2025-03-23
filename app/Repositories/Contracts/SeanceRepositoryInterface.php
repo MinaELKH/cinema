@@ -4,10 +4,11 @@ namespace App\Repositories\Contracts;
 
 interface SeanceRepositoryInterface
 {
-    public function getAvailableSalles();
+    public function getAll();
+    public function findById($id);
     public function create(array $data);
-    public function find($id);
-    public function update( array $data ,$id);
+    public function update($id, array $data);
     public function delete($id);
+
 }
 

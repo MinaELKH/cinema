@@ -2,13 +2,14 @@
 
 namespace App\Services;
 
-use App\Repositories\FilmRepository;
+
+use App\Repositories\SiegeRepository;
 
 class SiegeService
 {
     protected $siegeRepo;
 
-    public function __construct(FilmRepository $siegeRepo)
+    public function __construct(SiegeRepository $siegeRepo)
     {
         $this->siegeRepo = $siegeRepo;
     }

@@ -1,0 +1,108 @@
+<?php
+namespace App\Repositories;
+
+use App\Models\Reservation;
+use App\Models\Siege;
+use App\Models\Seance;
+use App\Models\Film;
+use App\Repositories\Contracts\ReservationRepositoryInterface;
+use Illuminate\Support\Facades\DB;
+
+class ReservationRepository implements ReservationRepositoryInterface
+{
+    // Vérifie les sièges disponibles pour une séance donnée
+    public function checkAvailableSieges(Seance $seance)
+    {
+        // On cherche les sièges non réservés et non en attente pour cette séance
+        return $seance->sieges()->whereDoesntHave('reservations', function ($query) use ($seance) {
+            $query->where('seance_id', $seance->id)
+                ->whereIn('status', ['reserved', 'pending']);
+        })->get();
+    }
+
+    // Créer une réservation pour un spectateur
+    public function createReservation(array $data)
+    {
+        $seance = Seance::findOrFail($data['seance_id']);
+        $userId = $data['user_id'];
+
+        // Vérifier la disponibilité des sièges pour cette séance
+        $availableSieges = $this->checkAvailableSieges($seance);
+
+        if ($seance->isVIP()) {
+            // Si la séance est VIP, vérifier si des sièges doubles sont disponibles
+            if ($availableSieges->count() < 2) {
+                return response()->json(['message' => 'Il n\'y a pas de sièges doubles disponibles pour cette séance VIP.'], 400);
+            }
+            // Réserver deux sièges
+            $siege1 = $availableSieges->first();
+            $siege2 = $availableSieges->skip(1)->first();
+
+            Reservation::create([
+                'user_id' => $userId,
+                'siege_id' => $siege1->id,
+                'seance_id' => $seance->id,
+                'status' => 'pending',
+            ]);
+
+            Reservation::create([
+                'user_id' => $userId,
+                'siege_id' => $siege2->id,
+                'seance_id' => $seance->id,
+                'status' => 'pending',
+            ]);
+
+            return response()->json(['message' => 'Réservation en attente, paiement dans les 15 minutes.'], 200);
+        }
+
+        // Si la séance est normale, réserver un siège simple
+        $siegeDisponible = $availableSieges->first();
+
+        if (!$siegeDisponible) {
+            return response()->json(['message' => 'Aucun siège disponible pour cette séance.'], 400);
+        }
+
+        Reservation::create([
+            'user_id' => $userId,
+            'siege_id' => $siegeDisponible->id,
+            'seance_id' => $seance->id,
+            'status' => 'pending',
+        ]);
+
+        return response()->json(['message' => 'Réservation en attente, paiement dans les 15 minutes.'], 200);
+    }
+
+    // Confirmer la réservation si le paiement est effectué dans les 15 minutes
+    public function confirmReservation($reservationId)
+    {
+        $reservation = Reservation::findOrFail($reservationId);
+
+        // Vérifier que la réservation est en attente
+        if ($reservation->status == 'pending') {
+            // Confirmer la réservation
+            $reservation->status = 'reserved';
+            $reservation->save();
+
+            return response()->json(['message' => 'Réservation confirmée.'], 200);
+        }
+
+        return response()->json(['message' => 'Cette réservation ne peut pas être confirmée.'], 400);
+    }
+
+    // Annuler une réservation si elle n'est pas payée dans les 15 minutes
+    public function cancelReservation($reservationId)
+    {
+        $reservation = Reservation::findOrFail($reservationId);
+
+        // Vérifier que la réservation est en attente
+        if ($reservation->status == 'pending') {
+            // Annuler la réservation
+            $reservation->status = 'cancelled';
+            $reservation->save();
+
+            return response()->json(['message' => 'Réservation annulée.'], 200);
+        }
+
+        return response()->json(['message' => 'Cette réservation ne peut pas être annulée.'], 400);
+    }
+}

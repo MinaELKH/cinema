@@ -13,4 +13,17 @@ class Siege extends Model
         return $this->belongsTo(Salle::class);
 
     }
+
+    public function seances()
+    {
+        return $this->belongsToMany(Seance::class, 'reservations')
+            ->withPivot('spectateur_id', 'status')
+            ->wherePivot('status', '!=', 'reserved');
+    }
+
+    public function reservations()
+    {
+        return $this->belongsToMany(User::class, 'reservations')
+            ->withPivot('seance_id', 'status');
+    }
 }

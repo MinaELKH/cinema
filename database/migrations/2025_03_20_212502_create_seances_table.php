@@ -18,7 +18,7 @@ return new class extends Migration
             $table->dateTime('start_time');
             $table->string('session'); // Matin, Après-midi, Soir...
             $table->string('langue');
-            $table->enum('type_seance', ['Normale', 'VIP']);
+            $table->enum('type_seance', ['Normale', 'VIP'])->default('Normale');;
             $table->timestamps();
         });
     }

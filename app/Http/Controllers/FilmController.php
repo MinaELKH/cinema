@@ -31,6 +31,7 @@ class FilmController extends Controller
             'acteurs' => 'nullable|array',
         ]);
 
+
         return response()->json($this->filmRepo->create($validated), 201);
     }
 

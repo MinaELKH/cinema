@@ -21,12 +21,14 @@ class ReservationController extends Controller
     public function store(Request $request)
     {
         $userId = Auth::id();  // Récupérer l'ID de l'utilisateur authentifié
-        Log::debug('Un message de debug', ['userId' =>  $userId]);
+
         $data = $request->all(); // Récupérer les données de la requête
+
         $data['user_id'] = $userId; // Ajouter l'ID de l'utilisateur aux données de la réservation
 
         return $this->reservationService->createReservation($data); // Appeler la méthode pour créer la réservation
     }
+
 
     // Pour confirmer une réservation après paiement
     public function confirm($id)

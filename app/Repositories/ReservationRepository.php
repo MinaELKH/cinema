@@ -13,22 +13,36 @@ class ReservationRepository implements ReservationRepositoryInterface
     // Vérifie les sièges disponibles pour une séance donnée
     public function checkAvailableSieges(Seance $seance)
     {
-        // On cherche les sièges non réservés et non en attente pour cette séance
-        return $seance->sieges()->whereDoesntHave('reservations', function ($query) use ($seance) {
-            $query->where('seance_id', $seance->id)
-                ->whereIn('status', ['reserved', 'pending']);
-        })->get();
+        return DB::table('sieges')
+            ->whereNotIn('id', function ($query) use ($seance) {
+                $query->select('siege_id')
+                    ->from('reservations')
+                    ->where('seance_id', $seance->id)
+                    ->whereIn('status', ['reserved', 'pending']); // Exclure les sièges réservés ou en attente
+            })
+            ->get();
     }
+    //verifier est ce que l siege n° x  est disponilbe
+    public function checkAvailableSiege(Seance $seance, Siege $siege)
+    {
+        return !DB::table('reservations')
+            ->where('siege_id', $siege->id)
+            ->where('seance_id', $seance->id)
+            ->whereIn('status', ['reserved', 'pending']) // Vérifier si ce siège est déjà pris
+            ->exists(); // Retourne true si une réservation existe, false sinon
+    }
+
 
     // Créer une réservation pour un spectateur
     public function createReservation(array $data)
     {
         $seance = Seance::findOrFail($data['seance_id']);
         $userId = $data['user_id'];
+        $siege = Siege::findOrFail($data['seance_id']);
 
         // Vérifier la disponibilité des sièges pour cette séance
-        $availableSieges = $this->checkAvailableSieges($seance);
-
+         $availableSieges = $this->checkAvailableSieges($seance);
+         //return response()->json($availableSieges);
         if ($seance->isVIP()) {
             // Si la séance est VIP, vérifier si des sièges doubles sont disponibles
             if ($availableSieges->count() < 2) {
@@ -56,7 +70,7 @@ class ReservationRepository implements ReservationRepositoryInterface
         }
 
         // Si la séance est normale, réserver un siège simple
-        $siegeDisponible = $availableSieges->first();
+        $siegeDisponible = $this->checkAvailableSiege($seance , $siege);
 
         if (!$siegeDisponible) {
             return response()->json(['message' => 'Aucun siège disponible pour cette séance.'], 400);
@@ -64,7 +78,7 @@ class ReservationRepository implements ReservationRepositoryInterface
 
         Reservation::create([
             'user_id' => $userId,
-            'siege_id' => $siegeDisponible->id,
+            'siege_id' => $siege->id,
             'seance_id' => $seance->id,
             'status' => 'pending',
         ]);

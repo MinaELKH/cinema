@@ -30,6 +30,10 @@ class Seance extends Model
     public function sieges()
     {
         return $this->belongsToMany(Siege::class, 'reservations')
-            ->withPivot('spectateur_id', 'status');
+            ->withPivot('user_id', 'status');
+    }
+    public function isVIP()
+    {
+        return $this->type_seance === 'VIP';
     }
 }

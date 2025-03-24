@@ -17,7 +17,7 @@ class Siege extends Model
     public function seances()
     {
         return $this->belongsToMany(Seance::class, 'reservations')
-            ->withPivot('spectateur_id', 'status')
+            ->withPivot('user_id', 'status')
             ->wherePivot('status', '!=', 'reserved');
     }
 

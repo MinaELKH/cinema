@@ -25,6 +25,6 @@ class Reservation extends Model
 
     public function seance()
     {
-        return $this->belongsTo(Seance::class);
+        return $this->belongsTo(Seance::class );
     }
 }

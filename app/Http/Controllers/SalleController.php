@@ -28,8 +28,6 @@ class SalleController extends Controller
         // Générer les sièges automatiquement
         $sieges = $this->siegeService->generateSiegesForSalle($salle);
 
-
-
         return response()->json([
             'salle' => $salle,
             'sieges' => $sieges,

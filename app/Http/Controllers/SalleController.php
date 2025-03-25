@@ -2,20 +2,23 @@
 namespace App\Http\Controllers;
 
 use App\Repositories\SalleRepository;
+use App\Services\SalleService;
 use App\Services\SiegeService;
 use Illuminate\Http\Request;
 
 class SalleController extends Controller
 {
-    protected $salleRepo;
+    protected $salleService;
     protected $siegeService;
 
-    public function __construct(SalleRepository $salleRepo, SiegeService $siegeService)
+    public function __construct(SalleService $salleSerivce, SiegeService $siegeService)
     {
-        $this->salleRepo = $salleRepo;
+        $this->salleService = $salleSerivce;
         $this->siegeService = $siegeService;
     }
-
+    public function index(){
+        return $this->salleService->getAll();
+    }
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -33,6 +36,33 @@ class SalleController extends Controller
             'sieges' => $sieges,
         ], 201);
     }
+
+        public function update($id, Request $request){
+            $validated = $request->validate([
+                'nom' => 'required|string|max:255',
+                'capacite' => 'required|integer',
+                'type' => 'required|in:Normale,VIP',
+            ]);
+
+            $salle = $this->salleService->update($id  ,$validated );
+
+
+            return response()->json([
+                'salle' => $salle
+            ], 201);
+      }
+    public function destroy($id)
+    {
+        $this->salleService->delete($id);
+
+    }
+
+    public function s()
+    {
+
+    }
+
+
 }
 
 

@@ -24,21 +24,30 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
+
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 
+
+
+Route::get('/seances/films', [SeanceController::class, 'getAllSeancesWithFilms']);
+Route::get('/seances', [SeanceController::class, 'showByType']);  // avec query ?type=VIP
+
 Route::apiResource('salles', SalleController::class);
 Route::apiResource('films', FilmController::class);
+
 Route::apiResource('seances', SeanceController::class);
+
+
+
+
+
 
 
 Route::apiResource('sieges', SiegeController::class);
 
-
 //Route::middleware('auth:sanctum')->post('/reservations', [ReservationController::class, 'create']);
-
-
 
 Route::middleware('auth:api')->group(function () {
     Route::resource('reservations', ReservationController::class);

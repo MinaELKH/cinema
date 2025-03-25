@@ -14,12 +14,12 @@ class Siege extends Model
 
     }
 
-    public function seances()
-    {
-        return $this->belongsToMany(Seance::class, 'reservations')
-            ->withPivot('user_id', 'status')
-            ->wherePivot('status', '!=', 'reserved');
-    }
+//    public function seances()
+//    {
+//        return $this->belongsToMany(Seance::class, 'reservations')
+//            ->withPivot('user_id', 'status')
+//            ->wherePivot('status', '!=', 'reserved');
+//    }
 
     public function reservations()
     {

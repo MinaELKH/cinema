@@ -1,4 +1,6 @@
 <?php
+
+
 namespace App\Repositories;
 
 use App\Models\Film;
@@ -6,15 +8,6 @@ use App\Repositories\Contracts\FilmRepositoryInterface;
 
 class FilmRepository implements FilmRepositoryInterface
 {
-    public function getAll()
-    {
-        return Film::all();
-    }
-
-    public function findById($id)
-    {
-        return Film::findOrFail($id);
-    }
 
     public function create(array $data)
     {
@@ -23,13 +16,26 @@ class FilmRepository implements FilmRepositoryInterface
 
     public function update($id, array $data)
     {
-        $film = $this->findById($id);
+        $film = Film::findOrFail($id);
         $film->update($data);
         return $film;
     }
 
     public function delete($id)
     {
-        return Film::destroy($id);
+        $film = Film::findOrFail($id);
+        $film->delete();
+        return $film;
+    }
+
+    public function find($id)
+    {
+        return Film::findOrFail($id);
+    }
+
+    public function getAll()
+    {
+        return Film::all();
     }
 }
+

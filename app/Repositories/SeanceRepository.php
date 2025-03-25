@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Models\Film;
 use App\Models\Seance;
 use App\Repositories\Contracts\SeanceRepositoryInterface;
+use Illuminate\Support\Facades\DB;
 
 class SeanceRepository implements SeanceRepositoryInterface
 {
@@ -16,6 +17,14 @@ class SeanceRepository implements SeanceRepositoryInterface
     public function findById($id)
     {
         return Seance::findOrFail($id);
+    }
+    public function getSeancesByType($type){
+        $seances = DB::table('seances')
+             ->join('films', 'films.id', '=', 'seances.film_id')
+            ->where('seances.type_seance', $type)
+            ->get();
+        return $seances;
+
     }
 
     public function create(array $data)
@@ -38,5 +47,13 @@ class SeanceRepository implements SeanceRepositoryInterface
     public function delete($id)
     {
         return Seance::destroy($id);
+    }
+
+    public function getAllSeancesWithFilms()
+    {
+       return DB::table('seances')
+           ->join('films', 'films.id', '=', 'seances.film_id')
+           ->join('salles', 'salles.id', '=', 'seances.salle_id')
+           ->get();
     }
 }

@@ -35,4 +35,29 @@ class SeanceController extends Controller
 
         return response()->json($seance, 201);
     }
+
+    public function showByType( Request $request){
+       // $this->seanceService->showByType($type) ;
+
+
+        $type = $request->query('type');  // Récupère le paramètre 'type' de la requête
+
+        if (!in_array($type, ['Normale', 'VIP'])) {
+            return response()->json(['error' => 'Le type doit être soit "Normale" soit "VIP".'], 400);
+        }
+
+        // Utilisation du service pour récupérer les séances filtrées
+        $seances = $this->seanceService->getSeancesByType($type);
+
+        if ($seances->isEmpty()) {
+            return response()->json(['message' => 'Aucune séance trouvée pour ce type.'], 404);
+        }
+
+        return response()->json($seances, 200);
+
+    }
+    public function getAllSeancesWithFilms(){
+      return  $seances=$this->seanceService->getAllSeancesWithFilms();
+
+    }
 }

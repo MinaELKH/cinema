@@ -27,10 +27,14 @@ class Seance extends Model
         return $this->belongsTo(Salle::class);
     }
 
-    public function sieges()
+//    public function sieges()
+//    {
+//        return $this->belongsToMany(Siege::class, 'reservations')
+//            ->withPivot('user_id', 'status');
+//    }
+    public function reservations()
     {
-        return $this->belongsToMany(Siege::class, 'reservations')
-            ->withPivot('user_id', 'status');
+        return $this->hasMany(Reservation::class);
     }
     public function isVIP()
     {

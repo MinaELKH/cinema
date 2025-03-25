@@ -1,63 +1,41 @@
 <?php
+
 namespace App\Http\Controllers;
 
-use App\Repositories\Contracts\FilmRepositoryInterface;
+use App\Services\FilmService;
 use Illuminate\Http\Request;
 
 class FilmController extends Controller
 {
-    protected $filmRepo;
+    protected $filmService;
 
-    public function __construct(FilmRepositoryInterface $filmRepo)
+    public function __construct(FilmService $filmService)
     {
-        $this->filmRepo = $filmRepo;
+        $this->filmService = $filmService;
     }
 
     public function index()
     {
-        return response()->json($this->filmRepo->getAll());
-    }
-
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'titre' => 'required|string|max:255',
-            'description' => 'required|string',
-            'image' => 'nullable|string',
-            'duree' => 'required|integer',
-            'age_minimum' => 'required|integer',
-            'bande_annonce' => 'nullable|string',
-            'genre' => 'required|string',
-            'acteurs' => 'nullable|array',
-        ]);
-
-
-        return response()->json($this->filmRepo->create($validated), 201);
+        return response()->json($this->filmService->getAll());
     }
 
     public function show($id)
     {
-        return response()->json($this->filmRepo->findById($id));
+        return response()->json($this->filmService->get($id));
+    }
+
+    public function store(Request $request)
+    {
+        return response()->json($this->filmService->create($request->all()), 201);
     }
 
     public function update(Request $request, $id)
     {
-        $validated = $request->validate([
-            'titre' => 'string|max:255',
-            'description' => 'string',
-            'image' => 'nullable|string',
-            'duree' => 'integer',
-            'age_minimum' => 'integer',
-            'bande_annonce' => 'nullable|string',
-            'genre' => 'string',
-            'acteurs' => 'nullable|array',
-        ]);
-
-        return response()->json($this->filmRepo->update($id, $validated));
+        return response()->json($this->filmService->update($id, $request->all()));
     }
 
     public function destroy($id)
     {
-        return response()->json($this->filmRepo->delete($id), 204);
+        return response()->json($this->filmService->delete($id));
     }
 }

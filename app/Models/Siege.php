@@ -9,6 +9,9 @@ class Siege extends Model
 {
     use HasFactory;
     protected $fillable=['numero' , 'type' , 'salle_id'];
+
+
+
     public function salle(){
         return $this->belongsTo(Salle::class);
 

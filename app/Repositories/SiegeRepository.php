@@ -38,4 +38,10 @@ class SiegeRepository implements SiegeRepositoryInterface
         }
         return false;
     }
+
+    public function getSiege( $siege_id)
+    {
+        return Siege::find( $siege_id);
+    }
+
 }

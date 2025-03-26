@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Models\Reservation;
 use App\Models\User;
 use App\Services\ReservationService;
 use Illuminate\Http\Request;
@@ -27,6 +28,14 @@ class ReservationController extends Controller
         $data['user_id'] = $userId; // Ajouter l'ID de l'utilisateur aux données de la réservation
 
         return $this->reservationService->createReservation($data); // Appeler la méthode pour créer la réservation
+    }
+
+    public function update(Request $request  , $id)
+    {
+        $data = $request->all();
+        $data['user_id'] = auth()->id();
+      //  return response()->json($data);
+        return $this->reservationService->updateResevation($data , $id);
     }
 
 

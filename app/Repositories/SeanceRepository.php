@@ -15,8 +15,12 @@ class SeanceRepository implements SeanceRepositoryInterface
     }
 
     public function findById($id)
+{
+    return Seance::find($id);
+}
+    public function getSeance($id)
     {
-        return Seance::findOrFail($id);
+        return Seance::find($id);
     }
     public function getSeancesByType($type){
         $seances = DB::table('seances')

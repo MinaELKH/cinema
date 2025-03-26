@@ -11,6 +11,7 @@ class SalleController extends Controller
     protected $salleService;
     protected $siegeService;
 
+
     public function __construct(SalleService $salleSerivce, SiegeService $siegeService)
     {
         $this->salleService = $salleSerivce;
@@ -27,7 +28,7 @@ class SalleController extends Controller
             'type' => 'required|in:Normale,VIP',
         ]);
 
-        $salle = $this->salleRepo->create($validated);
+        $salle = $this->salleService->create($validated);
         // Générer les sièges automatiquement
         $sieges = $this->siegeService->generateSiegesForSalle($salle);
 

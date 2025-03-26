@@ -147,9 +147,10 @@ class ReservationRepository implements ReservationRepositoryInterface
     }
 
     public function getReservation($reservationId){
-        return DB::table('reservations')
-                 ->where('id', $reservationId)
-                 ->first();
+       return  Reservation::find($reservationId);
+//        return DB::table('reservations')
+//                 ->where('id', $reservationId)
+//                 ->first();
 
     }
     public function createReservation(array $data)

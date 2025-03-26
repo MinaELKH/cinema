@@ -87,13 +87,14 @@ class ReservationService
     }
     public function updateResevation($data, $reservationId)
     {
-        $reservation = $this->reservationRepository->getReservation($reservationId);
+        $reservation = $this->reservationRepository->getRe
+        servation($reservationId);
         // Récupérer la séance et le siège
         $seance = $this->seanceRepository->getSeance($data['seance_id']);
         $siege = $this->siegeRepository->getSiege($data['siege_id']);
 
         // Vérifier que l'utilisateur est bien le propriétaire de la réservation
-        if ($reservation->user_id !== $data['user_id']) {
+        if ($reservation->user_id != $data['user_id']) {
             return response()->json(['message' => 'Vous n\'êtes pas autorisé à modifier cette réservation.'], 403);
         }
 
@@ -104,7 +105,7 @@ class ReservationService
             return response()->json(['error'=>'il y a pas de seige   avec ce id'], 403) ;
         }
 
-        return response()->json(['seance'=>$seance,'siege'=>$siege,'reservation'=>$reservation]);
+       // return response()->json(['seance'=>$seance,'siege'=>$siege,'reservation'=>$reservation]);
         // Vérifier l'existance du seige dans la salle ou passe le film
         if($seance->salle_id != $siege->salle_id){
             return response()->json(['error'=>'ce seige n est existe pas dans la salle ou deroule la seance  '], 403) ;
@@ -130,7 +131,7 @@ class ReservationService
             ]);
 
             // Créer une seconde réservation pour le deuxième siège
-            $this->reservationRepository->createReservation([
+            $this->reservationRepository->updateReservation([
                 'user_id' => $data['user_id'],
                 'siege_id' => $siege2->id,
                 'seance_id' => $seance->id,

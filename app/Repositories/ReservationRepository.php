@@ -15,11 +15,13 @@ class ReservationRepository implements ReservationRepositoryInterface
     {
         return DB::table('sieges')
             ->whereNotIn('id', function ($query) use ($seance) {
+
                 $query->select('siege_id')
                     ->from('reservations')
                     ->where('seance_id', $seance->id)
                     ->whereIn('status', ['reserved', 'pending']); // Exclure les sièges réservés ou en attente
             })
+
             ->get();
     }
     //verifier est ce que l siege n° x  est disponilbe
@@ -136,25 +138,24 @@ class ReservationRepository implements ReservationRepositoryInterface
     public function updateReservation($reservation, $data)
     {
         // Mise à jour d'une réservation
-        $reservation->update([
-            'user_id' => $data['user_id'],
-            'siege_id' => $data['siege_id'],
-            'seance_id' => $data['seance_id'],
-            'status' => 'pending',
-        ]);
+//        $reservation->update([
+//            'user_id' => $data['user_id'],
+//            'siege_id' => $data['siege_id'],
+//            'seance_id' => $data['seance_id'],
+//            'status' => $data['status'],
+//        ]);
 
+        $reservation->update($data);
         return $reservation;
     }
 
     public function getReservation($reservationId){
        return  Reservation::find($reservationId);
-//        return DB::table('reservations')
-//                 ->where('id', $reservationId)
-//                 ->first();
-
     }
     public function createReservation(array $data)
     {
         return Reservation::create($data);
     }
+
+
 }

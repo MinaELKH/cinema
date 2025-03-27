@@ -10,7 +10,7 @@ class Seance extends Model
     use HasFactory;
 
     protected $fillable = [
-        'film_id', 'salle_id', 'start_time', 'session', 'langue', 'type_seance'
+        'film_id', 'salle_id', 'start_time', 'session', 'langue', 'type_seance' , 'prix'
     ];
 
     public static function create(array $validated)

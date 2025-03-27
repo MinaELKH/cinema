@@ -29,6 +29,7 @@ class SeanceController extends Controller
             'session' => 'required|string',
             'langue' => 'required|string',
             'type_seance' => 'required|in:Normale,VIP',
+            'prix' => 'required|numeric',
         ]);
 
         $seance = $this->seanceService->createSeance($validated);

@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('reservations', function (Blueprint $table) {
-            $table->renameColumn('spectateur_id', 'user_id');  // Renommer la colonne
+        Schema::table('seances', function (Blueprint $table) {
+            $table->float('prix');
         });
     }
 
@@ -21,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('reservations', function (Blueprint $table) {
-            $table->renameColumn('user_id', 'spectateur_id');  // Revenir en arrière si nécessaire
+        Schema::table('seance', function (Blueprint $table) {
+            //
         });
     }
 };

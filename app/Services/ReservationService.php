@@ -31,6 +31,8 @@ class ReservationService
         if( $siege == isempty() ){
             return response()->json(['error'=>'il y a pas de seige   avec ce id'], 403) ;
         }
+       // return response()->json(['seance'=> $seance  , 'siege'=>$siege], 403) ;
+
         // Vérifier l'existance du seige dans la salle ou passe le film
         if($seance->salle_id != $siege->salle_id){
             return response()->json(['error'=>'ce seige n est existe pas dans la salle ou deroule la seance  '], 403) ;
@@ -56,6 +58,7 @@ class ReservationService
                 'siege_id' => $siege2->id,
                 'seance_id' => $seance->id,
                 'status' => 'pending',
+                'prix'=>$seance->prix,
             ]);
 
             // Créer une seconde réservation pour le deuxième siège
@@ -64,6 +67,7 @@ class ReservationService
                 'siege_id' => $siege2->id,
                 'seance_id' => $seance->id,
                 'status' => 'pending',
+                'prix'=>$seance->prix,
             ]);
 
             return response()->json(['message' => 'Réservation modifiée avec succès, paiement dans les 15 minutes.'], 200);
@@ -80,6 +84,7 @@ class ReservationService
             'siege_id' => $siege->id,
             'seance_id' => $seance->id,
             'status' => 'pending',
+            'prix'=>$seance->prix,
         ]);
         return response()->json(['message' => 'Réservation est ajouté avec succès, paiement dans les 15 minutes.'], 200);
 
@@ -87,8 +92,7 @@ class ReservationService
     }
     public function updateResevation($data, $reservationId)
     {
-        $reservation = $this->reservationRepository->getRe
-        servation($reservationId);
+        $reservation = $this->reservationRepository->getReservation($reservationId);
         // Récupérer la séance et le siège
         $seance = $this->seanceRepository->getSeance($data['seance_id']);
         $siege = $this->siegeRepository->getSiege($data['siege_id']);
@@ -127,7 +131,7 @@ class ReservationService
                 'user_id' => $data['user_id'],
                 'siege_id' => $siege1->id,
                 'seance_id' => $seance->id,
-                'status' => 'pending',
+                'status' => $reservation->status,
             ]);
 
             // Créer une seconde réservation pour le deuxième siège
@@ -135,7 +139,7 @@ class ReservationService
                 'user_id' => $data['user_id'],
                 'siege_id' => $siege2->id,
                 'seance_id' => $seance->id,
-                'status' => 'pending',
+                'status' => $reservation->status,
             ]);
 
             return response()->json(['message' => 'Réservation modifiée avec succès, paiement dans les 15 minutes.'], 200);
@@ -151,7 +155,7 @@ class ReservationService
             'user_id' => $data['user_id'],
             'siege_id' => $siege->id,
             'seance_id' => $seance->id,
-            'status' => 'pending',
+            'status' => $reservation->status,
         ]);
 
         return response()->json(['message' => 'Réservation modifiée avec succès, paiement dans les 15 minutes.'], 200);
@@ -167,5 +171,13 @@ class ReservationService
         return $this->reservationRepository->cancelReservation($reservationId);
     }
 
+
+
+    public function updateReservationStatus($reservationId)
+    {
+           $reservation = $this->reservationRepository->getReservation($reservationId);
+            $this->reservationRepository->updateReservation($reservation, ['status' => 'reserved']);
+        return response()->json(['message' => 'Statut mis à jour avec succès.', 'reservation' => $reservation], 200);
+    }
 
 }

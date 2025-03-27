@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Film;
+use App\Models\Salle;
 use App\Models\Seance;
 use App\Repositories\Contracts\SeanceRepositoryInterface;
 use Illuminate\Support\Facades\DB;
@@ -31,16 +32,31 @@ class SeanceRepository implements SeanceRepositoryInterface
 
     }
 
+//    public function create(array $data)
+//    {
+//        $film = Film::findOrFail($data['film_id']);
+//        return $film->salles()->attach($data['salle_id'], [
+//            'start_time' => $data['start_time'],
+//            'session' => $data['session'],
+//            'langue' => $data['langue']
+//        ]);
+//    }
+
+
     public function create(array $data)
     {
         $film = Film::findOrFail($data['film_id']);
-        return $film->salles()->attach($data['salle_id'], [
+        $salle = Salle::findOrFail($data['salle_id']);
+
+        // Ajouter une séance dans la table pivot
+        return $film->salles()->attach($salle->id, [
             'start_time' => $data['start_time'],
             'session' => $data['session'],
-            'langue' => $data['langue']
+            'langue' => $data['langue'],
+            'type_seance' => $data['type_seance'],
+            'prix' => $data['prix'],
         ]);
     }
-
     public function update($id, array $data)
     {
         $seance = $this->findById($id);

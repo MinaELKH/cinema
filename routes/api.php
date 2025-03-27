@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FilmController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\SalleController;
 use App\Http\Controllers\SeanceController;
@@ -55,5 +56,12 @@ Route::middleware('auth:api')->group(function () {
     // Méthodes personnalisées en dehors de resource
     Route::post('/reservations/{id}/confirm', [ReservationController::class, 'confirm']);
     Route::post('/reservations/{id}/cancel', [ReservationController::class, 'cancel']);
+
+
+    //paiment
+    Route::post('/payment', [PaymentController::class, 'createCheckoutSession'])->name('payment.create');
+    Route::get('/payment/success', [PaymentController::class, 'success'])->name('payment.success');
+    Route::get('/payment/cancel', [PaymentController::class, 'cancel'])->name('payment.cancel');
+
 });
 

@@ -60,8 +60,12 @@ Route::middleware('auth:api')->group(function () {
 
     //paiment
     Route::post('/payment', [PaymentController::class, 'createCheckoutSession'])->name('payment.create');
-    Route::get('/payment/success', [PaymentController::class, 'success'])->name('payment.success');
     Route::get('/payment/cancel', [PaymentController::class, 'cancel'])->name('payment.cancel');
-
+    Route::post('/stripe/webhook', [PaymentController::class, 'handleWebhook']);
 });
 
+
+Route::get('/payment/success', [PaymentController::class, 'success'])->name('payment.success');
+//Quand tu ouvres le lien de paiement Stripe dans le navigateur, Laravel ne sait pas que tu es authentifié sur Postman. L'authentification est stockée dans une session ou via un token, mais quand Stripe redirige après le paiement, le navigateur ne transmet pas l'authentification.
+//
+//👉 Résultat : Laravel pense que tu n'es pas connecté et essaie de te rediriger vers /login, mais cette route n'existe pas.

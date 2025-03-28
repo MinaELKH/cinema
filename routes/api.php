@@ -93,3 +93,10 @@ use App\Http\Controllers\TicketController;
 
 Route::get('/generate-ticket/{reservationId}', [TicketController::class, 'generateTicket']);
 
+
+//statistique
+
+use App\Http\Controllers\DashboardController;
+
+Route::get('/admin/dashboard', [DashboardController::class, 'getDashboardStats']);
+

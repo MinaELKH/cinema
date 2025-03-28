@@ -68,15 +68,16 @@
         <strong>Film :</strong> {{ $Film }}<br>
         <strong>Séance :</strong> {{ $Seance }}<br>
         <strong>Siège :</strong> {{ $Siege }}<br>
-        <strong>Code de Réservation :</strong> {{ $reservation_code }}<br>
+        <strong>Prix :</strong> {{ $Prix }}<br>
+{{--        <strong>Code de Réservation :</strong> {{ $reservation_code }}<br>--}}
     </p>
     <div class="footer">
         Merci d'avoir réservé chez nous !<br>
         Veuillez conserver ce ticket pour l'entrée.
     </div>
-{{--    <div class="qrcode">--}}
+    <div class="qrcode">
 {{--        <img src="data:image/png;base64,{{ $qr_code }}" alt="QR Code">--}}
-{{--    </div>--}}
+    </div>
 </div>
 
 <!-- Importation de l'icône FontAwesome -->

@@ -2,9 +2,11 @@
 
 namespace App\Services;
 
+use App\Repositories\Contracts\FilmRepositoryInterface;
 use App\Repositories\Contracts\ReservationRepositoryInterface;
 use App\Repositories\Contracts\SeanceRepositoryInterface;
 use App\Repositories\Contracts\SiegeRepositoryInterface;
+use App\Repositories\UserRepository;
 use function PHPUnit\Framework\isEmpty;
 
 class ReservationService
@@ -12,12 +14,16 @@ class ReservationService
     protected $reservationRepository;
     private $seanceRepository;
     private $siegeRepository;
+    private $filmRepository;
+    private $UserRepository;
 
-    public function __construct(ReservationRepositoryInterface $reservationRepository , SeanceRepositoryInterface $seanceRepository , SiegeRepositoryInterface $siegeRepository , SiegeRepositoryInterface $siegeService)
+    public function __construct(ReservationRepositoryInterface $reservationRepository , SeanceRepositoryInterface $seanceRepository , SiegeRepositoryInterface $siegeRepository , SiegeRepositoryInterface $siegeService , filmRepositoryInterface $filmRepository , userRepository $userRepository)
     {
         $this->reservationRepository = $reservationRepository;
         $this->seanceRepository = $seanceRepository;
         $this->siegeRepository = $siegeRepository;
+        $this->filmRepository = $filmRepository;
+        $this->userRepository = $userRepository;
     }
 
     public function createReservation(array $data)
@@ -178,6 +184,25 @@ class ReservationService
            $reservation = $this->reservationRepository->getReservation($reservationId);
             $this->reservationRepository->updateReservation($reservation, ['status' => 'reserved']);
         return response()->json(['message' => 'Statut mis à jour avec succès.', 'reservation' => $reservation], 200);
+    }
+
+
+    public function ReservationDetaille($reservationId)
+    {
+    $reservation = $this->reservationRepository->getReservation($reservationId);
+        // Récupérer la séance et le siège
+        $seance = $this->seanceRepository->getSeance($reservation->seance_id);
+        $siege = $this->siegeRepository->getSiege($reservation->siege_id);
+        $film = $this->filmRepository->getFilm($seance->film_id);
+       // $user = $this->UserRepository->getUser($reservation->user_id);
+        $data = [
+            'reservation' => $reservation,
+            'seance' => $seance,
+            'siege' => $siege,
+            'film' => $film,
+          //  'user' => $user,
+        ];
+        return $data ;
     }
 
 }

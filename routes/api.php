@@ -69,3 +69,27 @@ Route::get('/payment/success', [PaymentController::class, 'success'])->name('pay
 //Quand tu ouvres le lien de paiement Stripe dans le navigateur, Laravel ne sait pas que tu es authentifié sur Postman. L'authentification est stockée dans une session ou via un token, mais quand Stripe redirige après le paiement, le navigateur ne transmet pas l'authentification.
 //
 //👉 Résultat : Laravel pense que tu n'es pas connecté et essaie de te rediriger vers /login, mais cette route n'existe pas.
+
+
+// genere pdf  test
+
+use Barryvdh\DomPDF\Facade\Pdf;
+
+//Route::get('/generate-pdf', function () {
+//    $data = [
+//        'title' => 'Test PDF',
+//        'content' => 'This is a PDF generated from Laravel'
+//    ];
+//
+//    $pdf = PDF::loadView('pdf.template', $data);
+//    return $pdf->download('generated-file.pdf');
+//} ;
+
+
+//generer pdf ticket
+
+
+use App\Http\Controllers\TicketController;
+
+Route::get('/generate-ticket/{reservationId}', [TicketController::class, 'generateTicket']);
+

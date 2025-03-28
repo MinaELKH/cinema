@@ -37,5 +37,10 @@ class FilmRepository implements FilmRepositoryInterface
     {
         return Film::all();
     }
+
+    public function getFilm($film_id)
+    {
+       return   Film::findOrFail($film_id);
+    }
 }
 

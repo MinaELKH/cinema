@@ -33,7 +33,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanc
 
 
 Route::get('/seances/films', [SeanceController::class, 'getAllSeancesWithFilms']);
-Route::get('/seances', [SeanceController::class, 'showByType']);  // avec query ?type=VIP
+Route::get('/seances/type', [SeanceController::class, 'showByType']);  // avec query ?type=VIP
 
 Route::apiResource('salles', SalleController::class);
 Route::apiResource('films', FilmController::class);

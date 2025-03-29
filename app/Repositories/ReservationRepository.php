@@ -151,6 +151,7 @@ class ReservationRepository implements ReservationRepositoryInterface
 
     public function getReservation($reservationId){
        return  Reservation::find($reservationId);
+
     }
     public function createReservation(array $data)
     {

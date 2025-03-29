@@ -17,7 +17,48 @@ class ReservationController extends Controller
         $this->reservationService = $reservationService;
         $this->middleware('auth:api'); // Assure-toi que l'utilisateur est authentifié avant d'accéder aux actions
     }
-
+    /**
+     * @OA\Post(
+     *     path="/api/reservations",
+     *     summary="Créer une nouvelle réservation",
+     *     description="Ajoute une réservation pour l'utilisateur authentifié.",
+     *     tags={"Réservations"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"seance_id", "siege_id"},
+     *             @OA\Property(property="seance_id", type="integer", example=2, description="ID de la séance à réserver"),
+     *             @OA\Property(property="siege_id", type="integer", example=15, description="ID du siège sélectionné")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Réservation créée avec succès",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="reservation", type="object",
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="user_id", type="integer", example=3),
+     *                 @OA\Property(property="seance_id", type="integer", example=2),
+     *                 @OA\Property(property="siege_id", type="integer", example=15),
+     *                 @OA\Property(property="status", type="string", example="pending")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Erreur de validation",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Le siège est déjà réservé.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Non authentifié"
+     *     )
+     * )
+     */
     // Pour créer une réservation
     public function store(Request $request)
     {
@@ -29,7 +70,54 @@ class ReservationController extends Controller
 
         return $this->reservationService->createReservation($data); // Appeler la méthode pour créer la réservation
     }
-
+    /**
+     * @OA\Put(
+     *     path="/api/reservations/{id}",
+     *     summary="Mettre à jour une réservation",
+     *     description="Mise à jour des informations d'une réservation existante.",
+     *     tags={"Réservations"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID de la réservation à mettre à jour",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"user_id", "siege_id", "seance_id", "status"},
+     *             @OA\Property(property="user_id", type="integer", example=1),
+     *             @OA\Property(property="siege_id", type="integer", example=10),
+     *             @OA\Property(property="seance_id", type="integer", example=3),
+     *             @OA\Property(property="status", type="string", example="confirmed")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Réservation mise à jour avec succès",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="id", type="integer", example=1),
+     *             @OA\Property(property="siege_id", type="integer", example=10),
+     *             @OA\Property(property="seance_id", type="integer", example=3),
+     *             @OA\Property(property="status", type="string", example="pending")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Données invalides"
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Non authentifié"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Réservation non trouvée"
+     *     )
+     * )
+     */
     public function update(Request $request  , $id)
     {
         $data = $request->all();
@@ -38,14 +126,87 @@ class ReservationController extends Controller
         return $this->reservationService->updateResevation($data , $id);
     }
 
-
+    /**
+     * @OA\Post(
+     *     path="/api/reservations/{id}/confirm",
+     *     summary="Confirmer une réservation",
+     *     description="Confirme une réservation en attente.",
+     *     tags={"Réservations"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID de la réservation à confirmer",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Réservation confirmée avec succès",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Réservation confirmée."),
+     *             @OA\Property(property="reservation", type="object",
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="user_id", type="integer", example=3),
+     *                 @OA\Property(property="status", type="string", example="confirmed"),
+     *                 @OA\Property(property="updated_at", type="string", format="date-time", example="2025-03-28 14:00:00")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Impossible de confirmer la réservation"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Réservation non trouvée"
+     *     )
+     * )
+     */
     // Pour confirmer une réservation après paiement
     public function confirm($id)
     {
         $userId = Auth::id();  // Vérifier l'utilisateur authentifié
         return $this->reservationService->confirmReservation($id, $userId); // Confirmer la réservation
     }
-
+    /**
+     * @OA\Put(
+     *     path="/api/reservations/{id}/cancel",
+     *     summary="Annuler une réservation",
+     *     description="Permet à l'utilisateur authentifié d'annuler une réservation si elle est encore en attente.",
+     *     tags={"Réservations"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID de la réservation à annuler",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Réservation annulée avec succès",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Réservation annulée.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="La réservation ne peut pas être annulée",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Cette réservation ne peut pas être annulée.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Non authentifié"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Réservation non trouvée"
+     *     )
+     * )
+     */
     // Pour annuler une réservation si le paiement n'a pas été effectué dans les 15 minutes
     public function cancel($id)
     {

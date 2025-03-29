@@ -17,7 +17,49 @@ use App\Models\Reservation;
 class PaymentController extends Controller
 {
     protected $reservationService;
-
+    /**
+     * @OA\Post(
+     *     path="/api/payment",
+     *     summary="Créer une session de paiement Stripe",
+     *     description="Cette méthode crée une session de paiement Stripe pour la réservation d'un film.",
+     *     tags={"Payment"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"reservation_id"},
+     *             @OA\Property(property="reservation_id", type="integer", example=1, description="ID de la réservation")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Session de paiement créée avec succès.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="url", type="string", example="https://checkout.stripe.com/pay/cs_test_abc123", description="URL pour le paiement")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Erreur lors de la création de la session de paiement.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="error", type="string", example="message d'erreur", description="Message d'erreur détaillé")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Utilisateur non authentifié.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="error", type="string", example="Utilisateur non authentifié.", description="Message d'erreur pour l'authentification")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Réservation introuvable.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="error", type="string", example="Réservation introuvable.", description="Message d'erreur si la réservation n'existe pas")
+     *         )
+     *     )
+     * )
+     */
     public function __construct(ReservationService $reservationService)
     {
         $this->reservationService = $reservationService;

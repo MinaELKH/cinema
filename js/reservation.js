@@ -12,6 +12,7 @@ function fetchSeances() {
             filmsContainer.innerHTML = "";
 
             seances.forEach(seance => {
+                //console.log(seance);
                 const seanceElement = document.createElement('li');
                 seanceElement.classList.add('film');
 
@@ -21,9 +22,10 @@ function fetchSeances() {
                     <h3 class="text-xl font-semibold">${seance.titre}</h3>
                     <p class="text-gray-600">${seance.description}</p>
                     <img src="http://127.0.0.1:8000/storage/films/${seance.image}" alt="${seance.titre}" class="w-52 my-2">
-                    <p><strong>Salle :</strong> ${seance.nom} (${seance.type})</p>
+                    <p><strong>Salle :</strong>${seance.nom} (${seance.type})</p>
                     <p><strong>Date :</strong> ${startTime}</p>
                     <p><strong>Langue :</strong> ${seance.langue}</p>
+                     <p><strong class='red-500'>numero seance :</strong> ${seance.id}</p>
                     <p><strong>Prix :</strong> ${seance.prix} DH</p>
                     <button class="reserve-btn bg-pink-500 text-white px-4 py-2 mt-2 rounded" data-seance-id="${seance.id}">Réserver</button>
                 `;

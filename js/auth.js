@@ -20,9 +20,23 @@ loginForm.addEventListener("submit", async (e) => {
 
         if (res.ok) {
             localStorage.setItem("token", data.token);
+            localStorage.setItem("user", JSON.stringify(data.user));
             messageDiv.classList.remove("text-red-500");
             messageDiv.classList.add("text-green-600");
             messageDiv.textContent = "Connexion réussie ✅";
+
+            //redirection 
+
+            if (data.user.role === "admin") {
+                window.location.href = "dashboard.html";
+            } else if (data.user.role === "spectateur") {
+                window.location.href = "reservation.html";
+            } else {
+                window.location.href = "index.html"; // rôle inconnu ou visiteur
+            }
+
+
+
         } else {
             throw new Error(data.error || "Erreur de connexion");
         }
@@ -51,9 +65,12 @@ registerForm.addEventListener("submit", async (e) => {
 
         if (res.ok) {
             localStorage.setItem("token", data.token);
+            localStorage.setItem("user", JSON.stringify(data.user));
             messageDiv.classList.remove("text-red-500");
             messageDiv.classList.add("text-green-600");
             messageDiv.textContent = "Inscription réussie ✅";
+
+            window.location.href = "reservation.html";
         } else {
             throw new Error(data.message || "Erreur d'inscription");
         }

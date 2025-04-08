@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Salles</title>
+    <link rel="stylesheet" href="../css/salle.css">
+</head>
+<body>
+    <h1>Gestion des Salles</h1>
+
+    <section id="salle-form-section">
+        <div class="container">
+            <h2 id="form-title">Ajouter une Nouvelle Salle</h2>
+            <form id="salle-form">
+                <input type="hidden" id="salle-id" />
+                <input type="text" id="nom" placeholder="Nom de la salle" required>
+                <input type="number" id="capacite" placeholder="Capacité" required>
+                <select id="type" required>
+                    <option value="Normale">Normale</option>
+                    <option value="VIP">VIP</option>
+                </select>
+                <button type="submit">Enregistrer</button>
+            </form>
+        </div>
+    </section>
+
+    <section id="salle-list">
+        <h2>Liste des Salles</h2>
+        <div class="grid_salle_manage" id="salles"></div>
+    </section>
+
+    <script src="../js/salle.js"></script>
+</body>
+</html>

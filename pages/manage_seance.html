@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajouter une Séance</title>
+    <link rel="stylesheet" href="../css/seance.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Ajouter une Séance</h1>
+
+        <form id="seance-form">
+            <label for="film">Film :</label>
+            <select id="film" required>
+                <option value="">Sélectionner un film</option>
+                <!-- Options ajoutées dynamiquement -->
+            </select>
+
+            <label for="salle">Salle :</label>
+            <select id="salle" required>
+                <option value="">Sélectionner une salle</option>
+                <!-- Options ajoutées dynamiquement -->
+            </select>
+
+            <label for="start_time">Date et Heure :</label>
+            <input type="datetime-local" id="start_time" required>
+
+            <label for="session">Session :</label>
+            <select id="session" required>
+                <option value="matin">Matin</option>
+                <option value="après-midi">Après-midi</option>
+                <option value="soir">Soir</option>
+            </select>
+
+            <label for="langue">Langue :</label>
+            <select id="langue" required>
+                <option value="FR">FR</option>
+                <option value="EN">EN</option>
+                <option value="VO">VO</option>
+            </select>
+
+            <label for="type_seance">Type de Séance :</label>
+            <select id="type_seance" required>
+                <option value="Normale">Normale</option>
+                <option value="3D">3D</option>
+                <option value="VIP">VIP</option>
+            </select>
+
+            <label for="prix">Prix (MAD) :</label>
+            <input type="number" id="prix" placeholder="Ex: 120" required>
+
+            <button type="submit">Ajouter la séance</button>
+        </form>
+    </div>
+    
+
+ 
+
+    <script src="../js/seance.js"></script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Films</title>
+    <link rel="stylesheet" href="../css/style.css">
+        <style>
+            .grid_film_manage {
+                display: grid;
+                grid-template-columns: auto auto;
+                gap: 10px;
+                color: #e03e00;
+            }
+        </style>
+</head>
+<body>
+    <h1>Gestion des Films</h1>
+
+    <!-- Formulaire d'ajout et modification de film -->
+
+        <!-- Section 1 : Formulaire -->
+         
+        <section id="film-form-section">
+            <div class="container">
+                <h1 id="form-title">Ajouter un Nouveau Film</h1>
+                <form id="film-form" enctype="multipart/form-data">
+                    <input type="hidden" id="film-id" />
+                    <input type="text" id="titre" placeholder="Titre du film" required>
+                    <textarea id="description" placeholder="Description du film" required></textarea>
+                    <input type="number" id="duree" placeholder="Durée" required>
+                    <select id="genre" required>
+                        <option value="action">Action</option>
+                        <option value="comedy">Comedy</option>
+                        <!-- Autres genres -->
+                    </select>
+                    <input type="number" id="age_minimum" placeholder="Limite d'âge" required>
+                    <div>
+                        <label>Image actuelle :</label><br>
+                        <img id="image-preview" src="" alt="" class="w-40 h-auto rounded-md">
+                    </div>
+                    <input type="file" name="image" accept="image/*" />
+                    <button type="submit">Ajouter le Film</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Section 2 : Liste des films -->
+        <section id="film-list">
+            <h2>Liste des Films</h2>
+            <ul id="films"></ul>
+        </section>
+    </div>
+
+    <script src="../js/film.js"></script>
+</body>
+</html>

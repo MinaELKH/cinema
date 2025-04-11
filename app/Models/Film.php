@@ -13,10 +13,16 @@ class Film extends Model
         'acteurs' => 'array',
     ];
     // Relation many-to-many avec Salle via la table pivot
-    public function salles()
+//    public function salles()
+//    {
+//        return $this->belongsToMany(Salle::class, 'seances')
+//            ->withPivot('start_time', 'session', 'langue')
+//            ->withTimestamps();
+//    }
+
+    public function seances()
     {
-        return $this->belongsToMany(Salle::class, 'seances')
-            ->withPivot('start_time', 'session', 'langue')
-            ->withTimestamps();
+        return $this->hasMany(Seance::class);
     }
+
 }

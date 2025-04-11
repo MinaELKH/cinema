@@ -9,6 +9,8 @@ use App\Http\Controllers\SeanceController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SiegeController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\TicketController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -20,10 +22,6 @@ use App\Http\Controllers\SiegeController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
 
 
 Route::post('/register', [AuthController::class, 'register']);
@@ -32,25 +30,26 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanc
 
 
 
-Route::get('/seances/films', [SeanceController::class, 'getAllSeancesWithFilms']);
-Route::get('/seances/type', [SeanceController::class, 'showByType']);  // avec query ?type=VIP
 
-Route::apiResource('salles', SalleController::class);
-Route::apiResource('films', FilmController::class);
+/***************************  admin  ******************************/
 
-Route::apiResource('seances', SeanceController::class);
+Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
+
+    Route::get('/seances/films', [SeanceController::class, 'getAllSeancesWithFilms']);
+    Route::get('/seances/type', [SeanceController::class, 'showByType']);  // avec query ?type=VIP
+
+    Route::apiResource('salles', SalleController::class);
+    Route::apiResource('films', FilmController::class);
+
+    Route::apiResource('seances', SeanceController::class);
+
+    Route::get('/admin/dashboard', [DashboardController::class, 'getDashboardStats']);
+});
 
 
+/***************************  sepctateur ******************************/
 
-
-
-
-
-Route::apiResource('sieges', SiegeController::class);
-
-//Route::middleware('auth:sanctum')->post('/reservations', [ReservationController::class, 'create']);
-
-Route::middleware('auth:api')->group(function () {
+Route::middleware(['auth:sanctum', 'role:spectateur'])->group(function () {
     Route::resource('reservations', ReservationController::class);
 
     // Méthodes personnalisées en dehors de resource
@@ -62,7 +61,49 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/payment', [PaymentController::class, 'createCheckoutSession'])->name('payment.create');
     Route::get('/payment/cancel', [PaymentController::class, 'cancel'])->name('payment.cancel');
     Route::post('/stripe/webhook', [PaymentController::class, 'handleWebhook']);
+
 });
+
+
+
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+    return $request->user();
+});
+
+
+
+
+//Route::get('/seances/films', [SeanceController::class, 'getAllSeancesWithFilms']);
+//Route::get('/seances/type', [SeanceController::class, 'showByType']);  // avec query ?type=VIP
+//
+//Route::apiResource('salles', SalleController::class);
+//Route::apiResource('films', FilmController::class);
+//
+//Route::apiResource('seances', SeanceController::class);
+
+
+
+
+
+
+
+Route::apiResource('sieges', SiegeController::class);
+
+//Route::middleware('auth:sanctum')->post('/reservations', [ReservationController::class, 'create']);
+
+//Route::middleware('auth:api')->group(function () {
+//    Route::resource('reservations', ReservationController::class);
+//
+//    // Méthodes personnalisées en dehors de resource
+//    Route::post('/reservations/{id}/confirm', [ReservationController::class, 'confirm']);
+//    Route::post('/reservations/{id}/cancel', [ReservationController::class, 'cancel']);
+//
+//
+//    //paiment
+//    Route::post('/payment', [PaymentController::class, 'createCheckoutSession'])->name('payment.create');
+//    Route::get('/payment/cancel', [PaymentController::class, 'cancel'])->name('payment.cancel');
+//    Route::post('/stripe/webhook', [PaymentController::class, 'handleWebhook']);
+//});
 
 
 Route::get('/payment/success', [PaymentController::class, 'success'])->name('payment.success');
@@ -89,14 +130,14 @@ use Barryvdh\DomPDF\Facade\Pdf;
 //generer pdf ticket
 
 
-use App\Http\Controllers\TicketController;
+
 
 Route::get('/generate-ticket/{reservationId}', [TicketController::class, 'generateTicket']);
 
 
 //statistique
 
-use App\Http\Controllers\DashboardController;
 
-Route::get('/admin/dashboard', [DashboardController::class, 'getDashboardStats']);
+
+
 

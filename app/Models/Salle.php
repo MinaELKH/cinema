@@ -14,10 +14,25 @@ class Salle extends Model
         return $this->hasMany(Siege::class);
     }
     // Relation many-to-many avec Salle via la table pivot
+//    public function films()
+//    {
+//        return $this->belongsToMany(Salle::class, 'seances')
+//            ->withPivot('start_time', 'session', 'langue')
+//            ->withTimestamps();
+//    }
+
+// Remplace ceci :
     public function films()
     {
         return $this->belongsToMany(Salle::class, 'seances')
             ->withPivot('start_time', 'session', 'langue')
             ->withTimestamps();
     }
+
+// Par cela :
+    public function seances()
+    {
+        return $this->hasMany(Seance::class);
+    }
+
 }

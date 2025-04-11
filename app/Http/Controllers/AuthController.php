@@ -32,9 +32,12 @@ class AuthController extends Controller {
 
             // Retourner une réponse avec le message et le token
             return response()->json([
-                'message' => 'Connexion réussie',
-                'user' => $user,
-                'token' => $token
+                'token' => $token,
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'role' => $user->role,
+                ]
             ]);
         }
 

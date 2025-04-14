@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Seance;
 use App\Services\SeanceService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class SeanceController extends Controller
 {
@@ -75,5 +76,33 @@ class SeanceController extends Controller
         $seances = $this->seanceService->getSeancesByFilm($filmId);
         return response()->json($seances);
     }
+
+    public function getSiegesForSeance($seanceId)
+    {
+        $seance = Seance::find($seanceId);
+
+        if (!$seance) {
+            return response()->json(['message' => 'Séance non trouvée'], 404);
+        }
+
+        // Récupérer les sièges de la salle de la séance
+        $sieges = DB::table('sieges')
+            ->where('salle_id', $seance->salle_id) // On récupère les sièges de la même salle que la séance
+            ->whereNotIn('id', function ($query) use ($seance) {
+                $query->select('siege_id')
+                    ->from('reservations')
+                    ->where('seance_id', $seance->id)
+                    ->whereIn('status', ['reserved', 'pending']); // Exclure les sièges réservés ou en attente
+            })
+            ->get();
+
+        if ($sieges->isEmpty()) {
+            return response()->json(['message' => 'Aucun siège disponible pour cette séance'], 404);
+        }
+
+        return response()->json($sieges);
+    }
+
+
 
 }

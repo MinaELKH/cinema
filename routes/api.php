@@ -69,8 +69,8 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanc
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-Route::get('/seances/{seanceId}/sieges-disponibles', [ReservationController::class, 'getAvailableSieges']);
-
+//Route::get('/seances/{seanceId}/sieges-disponibles', [ReservationController::class, 'getAvailableSieges']);
+Route::get('seances/{seanceId}/sieges-disponibles', [SeanceController::class, 'getSiegesForSeance']);
 Route::get('/films/{film}/seances', [SeanceController::class, 'getSeancesByFilm']);
 
 

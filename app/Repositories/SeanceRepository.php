@@ -113,4 +113,16 @@ class SeanceRepository implements SeanceRepositoryInterface
 
     }
 
+
+//    public function getSeancesByFilm($filmId)
+//    {
+//
+//        select * from seances where film_id = 3
+//        $seances = Seance:
+//        ->where('film_id', $filmId)
+//            ->get();
+//
+//        return response()->json($seances);
+//    }
+
 }

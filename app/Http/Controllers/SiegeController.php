@@ -59,4 +59,6 @@ class SiegeController extends Controller
         $this->siegeService->deleteSiege($id);
         return response()->json(['message' => 'Siège supprimé avec succès']);
     }
+
+
 }

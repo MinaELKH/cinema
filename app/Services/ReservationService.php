@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Seance;
 use App\Repositories\Contracts\FilmRepositoryInterface;
 use App\Repositories\Contracts\ReservationRepositoryInterface;
 use App\Repositories\Contracts\SeanceRepositoryInterface;
@@ -204,5 +205,12 @@ class ReservationService
         ];
         return $data ;
     }
+    public function getAvailableSieges($seanceId)
+    {
+        $seance = Seance::findOrFail($seanceId);
 
+        $availableSieges = $this->reservationRepository->checkAvailableSieges($seance);
+
+        return response()->json($availableSieges);
+    }
 }

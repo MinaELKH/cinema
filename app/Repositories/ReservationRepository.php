@@ -15,13 +15,11 @@ class ReservationRepository implements ReservationRepositoryInterface
     {
         return DB::table('sieges')
             ->whereNotIn('id', function ($query) use ($seance) {
-
                 $query->select('siege_id')
                     ->from('reservations')
                     ->where('seance_id', $seance->id)
                     ->whereIn('status', ['reserved', 'pending']); // Exclure les sièges réservés ou en attente
             })
-
             ->get();
     }
     //verifier est ce que l siege n° x  est disponilbe

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Seance;
 use App\Repositories\Contracts\SeanceRepositoryInterface;
 
 class SeanceService
@@ -52,6 +53,21 @@ class SeanceService
             return response()->json(['error'=>'pas de seances a affiches'] , 404);
         }
 
+    }
+
+//public function getSeancesByFilm($filmId){
+//        $seances=$this->seanceRepository->getSeancesByFilm($filmId);
+//}
+
+
+
+    public function getSeancesByFilm($filmId)
+    {
+        $seances = Seance::with('salle')
+            ->where('film_id', $filmId)
+            ->get();
+
+     return $seances;;
     }
 
 }

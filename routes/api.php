@@ -33,7 +33,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanc
 
 /***************************  admin  ******************************/
 
-Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
+//Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
 
     Route::get('/seances/films', [SeanceController::class, 'getAllSeancesWithFilms']);
     Route::get('/seances/type', [SeanceController::class, 'showByType']);  // avec query ?type=VIP
@@ -44,12 +44,12 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     Route::apiResource('seances', SeanceController::class);
 
     Route::get('/admin/dashboard', [DashboardController::class, 'getDashboardStats']);
-});
+//});
 
 
 /***************************  sepctateur ******************************/
 
-Route::middleware(['auth:sanctum', 'role:spectateur'])->group(function () {
+//Route::middleware(['auth:sanctum', 'role:spectateur'])->group(function () {
     Route::resource('reservations', ReservationController::class);
 
     // Méthodes personnalisées en dehors de resource
@@ -62,14 +62,16 @@ Route::middleware(['auth:sanctum', 'role:spectateur'])->group(function () {
     Route::get('/payment/cancel', [PaymentController::class, 'cancel'])->name('payment.cancel');
     Route::post('/stripe/webhook', [PaymentController::class, 'handleWebhook']);
 
-});
+//});
 
 
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+Route::get('/seances/{seanceId}/sieges-disponibles', [ReservationController::class, 'getAvailableSieges']);
 
+Route::get('/films/{film}/seances', [SeanceController::class, 'getSeancesByFilm']);
 
 
 

@@ -58,7 +58,22 @@ class SeanceController extends Controller
 
     }
     public function getAllSeancesWithFilms(){
-      return  $seances=$this->seanceService->getAllSeancesWithFilms();
+        try {
+            $seances = $this->seanceService->getAllSeancesWithFilms();
 
+            if ($seances === null) {
+                return response()->json(['error' => 'Pas de séances à afficher.'], 404);
+            }
+
+            return response()->json($seances, 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Erreur serveur: ' . $e->getMessage()], 500);
+        }
     }
+
+    public function getSeancesByFilm($filmId){
+        $seances = $this->seanceService->getSeancesByFilm($filmId);
+        return response()->json($seances);
+    }
+
 }

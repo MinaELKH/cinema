@@ -2,10 +2,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Reservation;
+use App\Models\Seance;
 use App\Models\User;
 use App\Services\ReservationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class ReservationController extends Controller
@@ -224,6 +226,33 @@ class ReservationController extends Controller
 //
 //        return response()->json($user->reservations);
 //    }
+
+
+
+
+//    public function getAvailableSieges($seanceId)
+//    {
+//
+//        $availableSieges = $this->reservationService->getAvailableSieges($seanceId);
+//
+//        return response()->json($availableSieges);
+//    }
+
+    public function getAvailableSieges(Seance $seance)
+    {
+        // Récupérer l'ID de la salle de la séance
+        $salleId = $seance->salle_id; // Assure-toi que ta table "seances" a la relation "salle_id"
+
+        return DB::table('sieges')
+            ->where('salle_id', $salleId) // Filtrer par la salle spécifique
+            ->whereNotIn('id', function ($query) use ($seance) {
+                $query->select('siege_id')
+                    ->from('reservations')
+                    ->where('seance_id', $seance->id)
+                    ->whereIn('status', ['reserved', 'pending']); // Exclure les sièges réservés ou en attente
+            })
+            ->get();
+    }
 
 
 }

@@ -42,10 +42,9 @@
     <p><strong>Heure :</strong> {{ $ticketData['time'] }}</p>
     <p><strong>Siège :</strong> {{ $ticketData['seat'] }}</p>
     <p><strong>ID Billet :</strong> {{ $ticketData['ticketId'] }}</p>
+
 </div>
 
-<div class="qr-code">
-    <img src="data:image/png;base64, {!! base64_encode($qrCode) !!} " alt="QR Code">
-</div>
+
 </body>
 </html>

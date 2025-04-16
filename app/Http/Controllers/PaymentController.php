@@ -132,16 +132,25 @@ class PaymentController extends Controller
                 return response()->json(['error' => 'Réservation introuvable.'], 404);
             }
 
-            // Mise à jour du statut de la réservation
+            // Mise à jour du statut
             $reservation->update(['status' => 'accepted']);
 
-            return response()->json(['message' => 'Réservation confirmée avec succès.'], 200);
+            // Générer le ticket PDF et le retourner directement
+            $pdf = \PDF::loadView('pdf.ticket', [
+                'customer_name' => 'Cher spectateur/spectatrice',
+                'Film' => $reservation->seance->film->titre,
+                'Seance' => $reservation->seance->start_time,
+                'Siege' => $reservation->siege->siege_number,
+                'Prix' => $reservation->seance->prix,
+                'reservation_code' => $reservation->reservation_code,
+            ]);
+
+            return $pdf->download('ticket-' . $reservation->reservation_code . '.pdf');
+
         } catch (\Exception $e) {
             return response()->json([
-                'error' => 'Erreur lors de la mise à jour.',
+                'error' => 'Erreur lors de la confirmation.',
                 'message' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
             ], 500);
         }
     }

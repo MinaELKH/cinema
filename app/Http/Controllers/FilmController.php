@@ -30,7 +30,7 @@ class FilmController extends Controller
 
         if ($request->hasFile('image') && $request->file('image')->isValid()) {
             $imagePath = $request->file('image')->store('films', 'public');
-            $filmPayload['image'] = '/storage/' . $imagePath;
+            $filmPayload['image'] =  $imagePath;
         }
 
         return response()->json($this->filmService->create($filmPayload), 201);
@@ -40,7 +40,7 @@ class FilmController extends Controller
     {
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('films', 'public'); // stockage dans storage/app/public/films
-            $validated['image_url'] = '/storage/' . $imagePath;
+            $validated['image_url'] = $imagePath;
         }
 
         return response()->json($this->filmService->update($id, $request->all()));

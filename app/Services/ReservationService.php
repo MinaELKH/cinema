@@ -26,77 +26,144 @@ class ReservationService
         $this->filmRepository = $filmRepository;
         $this->userRepository = $userRepository;
     }
-
     public function createReservation(array $data)
     {
-        // Récupérer la séance et le siège
         $seance = $this->seanceRepository->getSeance($data['seance_id']);
         $siege = $this->siegeRepository->getSiege($data['siege_id']);
-        if($seance == isempty() ){
-            return response()->json(['error'=>'il y a pas de seance avec ce id'], 403) ;
-        }
-        if( $siege == isempty() ){
-            return response()->json(['error'=>'il y a pas de seige   avec ce id'], 403) ;
-        }
-       // return response()->json(['seance'=> $seance  , 'siege'=>$siege], 403) ;
 
-        // Vérifier l'existance du seige dans la salle ou passe le film
-        if($seance->salle_id != $siege->salle_id){
-            return response()->json(['error'=>'ce seige n est existe pas dans la salle ou deroule la seance  '], 403) ;
+        if (!$seance) {
+            return response()->json(['error' => 'Aucune séance trouvée avec cet ID'], 403);
         }
-        // Vérifier la disponibilité des sièges via le repository
+
+        if (!$siege) {
+            return response()->json(['error' => 'Aucun siège trouvé avec cet ID'], 403);
+        }
+
+        if ($seance->salle_id != $siege->salle_id) {
+            return response()->json(['error' => 'Ce siège n\'existe pas dans la salle de cette séance'], 403);
+        }
+
         $availableSieges = $this->reservationRepository->checkAvailableSieges($seance);
 
-        if($availableSieges->isEmpty()){
-
-        }
-        // Logique pour la réservation VIP ou normale
+        // ✅ Cas VIP
         if ($seance->isVIP()) {
             if ($availableSieges->count() < 2) {
-                return response()->json(['message' => 'Il n y a pas de sièges doubles disponibles pour cette séance VIP.'], 400);
+                return response()->json(['error' => 'Pas assez de sièges disponibles pour une réservation VIP'], 400);
             }
 
-            // Réserver deux sièges et mettre à jour les réservations
             $siege1 = $availableSieges->first();
             $siege2 = $availableSieges->skip(1)->first();
 
-            $this->reservationRepository->createReservation([
+            // ✅ Créer la 1ère réservation
+            $reservation1 = $this->reservationRepository->createReservation([
+                'user_id' => $data['user_id'],
+                'siege_id' => $siege1->id,
+                'seance_id' => $seance->id,
+                'status' => 'pending',
+                'prix' => $seance->prix,
+            ]);
+
+            // ✅ Créer la 2ème réservation
+            $reservation2 = $this->reservationRepository->createReservation([
                 'user_id' => $data['user_id'],
                 'siege_id' => $siege2->id,
                 'seance_id' => $seance->id,
                 'status' => 'pending',
-                'prix'=>$seance->prix,
+                'prix' => $seance->prix,
             ]);
 
-            // Créer une seconde réservation pour le deuxième siège
-            $this->reservationRepository->createReservation([
-                'user_id' => $data['user_id'],
-                'siege_id' => $siege2->id,
-                'seance_id' => $seance->id,
-                'status' => 'pending',
-                'prix'=>$seance->prix,
+            // ✅ Retourner l'ID d'une des deux (par ex la première)
+            return response()->json([
+                'message' => 'Réservation VIP effectuée avec succès.',
+                'id' => $reservation1->id
             ]);
-
-            return response()->json(['message' => 'Réservation modifiée avec succès, paiement dans les 15 minutes.'], 200);
         }
 
-        // Si la séance est normale
-        if (!$availableSieges->contains('id', $siege->id)) {
-            return response()->json(['message' => 'Aucun siège disponible pour cette séance. vous pourriez choisir parmi ces sieges encore disponible'  , 'contains'=> $availableSieges], 400);
-        }
-
-        // creation la réservation pour le siège simple
-        $this->reservationRepository->createReservation([
+        // ✅ Cas normal (non-VIP)
+        $reservation = $this->reservationRepository->createReservation([
             'user_id' => $data['user_id'],
             'siege_id' => $siege->id,
             'seance_id' => $seance->id,
             'status' => 'pending',
-            'prix'=>$seance->prix,
+            'prix' => $seance->prix,
         ]);
-        return response()->json(['message' => 'Réservation est ajouté avec succès, paiement dans les 15 minutes.'], 200);
 
-        return $this->reservationRepository->createReservation($data);
+        return response()->json([
+            'message' => 'Réservation ajoutée avec succès, paiement dans les 15 minutes.',
+            'id' => $reservation->id
+        ]);
     }
+
+//    public function createReservation(array $data)
+//    {
+//        // Récupérer la séance et le siège
+//        $seance = $this->seanceRepository->getSeance($data['seance_id']);
+//        $siege = $this->siegeRepository->getSiege($data['siege_id']);
+//        if($seance == isempty() ){
+//            return response()->json(['error'=>'il y a pas de seance avec ce id'], 403) ;
+//        }
+//        if( $siege == isempty() ){
+//            return response()->json(['error'=>'il y a pas de seige   avec ce id'], 403) ;
+//        }
+//       // return response()->json(['seance'=> $seance  , 'siege'=>$siege], 403) ;
+//
+//        // Vérifier l'existance du seige dans la salle ou passe le film
+//        if($seance->salle_id != $siege->salle_id){
+//            return response()->json(['error'=>'ce seige n est existe pas dans la salle ou deroule la seance  '], 403) ;
+//        }
+//        // Vérifier la disponibilité des sièges via le repository
+//        $availableSieges = $this->reservationRepository->checkAvailableSieges($seance);
+//
+//        if($availableSieges->isEmpty()){
+//
+//        }
+//        // Logique pour la réservation VIP ou normale
+//        if ($seance->isVIP()) {
+//            if ($availableSieges->count() < 2) {
+//                return response()->json(['message' => 'Il n y a pas de sièges doubles disponibles pour cette séance VIP.'], 400);
+//            }
+//
+//            // Réserver deux sièges et mettre à jour les réservations
+//            $siege1 = $availableSieges->first();
+//            $siege2 = $availableSieges->skip(1)->first();
+//
+//            $this->reservationRepository->createReservation([
+//                'user_id' => $data['user_id'],
+//                'siege_id' => $siege2->id,
+//                'seance_id' => $seance->id,
+//                'status' => 'pending',
+//                'prix'=>$seance->prix,
+//            ]);
+//
+//            // Créer une seconde réservation pour le deuxième siège
+//            $this->reservationRepository->createReservation([
+//                'user_id' => $data['user_id'],
+//                'siege_id' => $siege2->id,
+//                'seance_id' => $seance->id,
+//                'status' => 'pending',
+//                'prix'=>$seance->prix,
+//            ]);
+//
+//            return response()->json(['message' => 'Réservation modifiée avec succès, paiement dans les 15 minutes.'], 200);
+//        }
+//
+//        // Si la séance est normale
+//        if (!$availableSieges->contains('id', $siege->id)) {
+//            return response()->json(['message' => 'Aucun siège disponible pour cette séance. vous pourriez choisir parmi ces sieges encore disponible'  , 'contains'=> $availableSieges], 400);
+//        }
+//
+//        // creation la réservation pour le siège simple
+//        $this->reservationRepository->createReservation([
+//            'user_id' => $data['user_id'],
+//            'siege_id' => $siege->id,
+//            'seance_id' => $seance->id,
+//            'status' => 'pending',
+//            'prix'=>$seance->prix,
+//        ]);
+//        return response()->json(['message' => 'Réservation est ajouté avec succès, paiement dans les 15 minutes.'], 200);
+//
+//        return $this->reservationRepository->createReservation($data);
+//    }
     public function updateResevation($data, $reservationId)
     {
         $reservation = $this->reservationRepository->getReservation($reservationId);

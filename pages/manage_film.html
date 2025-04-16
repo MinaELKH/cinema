@@ -4,54 +4,191 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestion des Films</title>
-    <link rel="stylesheet" href="../css/style.css">
-        <style>
-            .grid_film_manage {
-                display: grid;
-                grid-template-columns: auto auto;
-                gap: 10px;
-                color: #e03e00;
-            }
-        </style>
+    
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #e03e00;
+            --primary-dark: #b83200;
+            --secondary: #2d3748;
+            --light: #f7fafc;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .form-input {
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+        
+        .form-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(224, 62, 0, 0.2);
+            outline: none;
+        }
+        
+        .film-card {
+            transition: all 0.3s ease;
+            border-top: 3px solid var(--primary);
+        }
+        
+        .film-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .card-btn {
+            transition: all 0.2s ease;
+        }
+        
+        .card-btn:hover {
+            transform: translateY(-2px);
+        }
+    </style>
 </head>
-<body>
-    <h1>Gestion des Films</h1>
+<body class="min-h-screen">
+    <header class="bg-gradient-to-r from-gray-800 to-gray-900 text-white py-6 shadow-lg">
+        <div class="container mx-auto px-4">
+            <h1 class="text-3xl font-bold text-center">Gestion des Films</h1>
+        </div>
+    </header>
 
-    <!-- Formulaire d'ajout et modification de film -->
-
-        <!-- Section 1 : Formulaire -->
-         
-        <section id="film-form-section">
-            <div class="container">
-                <h1 id="form-title">Ajouter un Nouveau Film</h1>
-                <form id="film-form" enctype="multipart/form-data">
+    <main class="container mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Section 1 : Formulaire -->
+            <section id="film-form-section" class="bg-white rounded-lg shadow-md p-6 lg:col-span-1">
+                <h2 id="form-title" class="text-2xl font-bold mb-6 text-center text-gray-800 border-b pb-3">Ajouter un Nouveau Film</h2>
+                
+                <form id="film-form" enctype="multipart/form-data" class="space-y-4">
                     <input type="hidden" id="film-id" />
-                    <input type="text" id="titre" placeholder="Titre du film" required>
-                    <textarea id="description" placeholder="Description du film" required></textarea>
-                    <input type="number" id="duree" placeholder="Durée" required>
-                    <select id="genre" required>
-                        <option value="action">Action</option>
-                        <option value="comedy">Comedy</option>
-                        <!-- Autres genres -->
-                    </select>
-                    <input type="number" id="age_minimum" placeholder="Limite d'âge" required>
+                    
                     <div>
-                        <label>Image actuelle :</label><br>
-                        <img id="image-preview" src="" alt="" class="w-40 h-auto rounded-md">
+                        <label for="titre" class="block text-sm font-medium text-gray-700 mb-1">Titre du film</label>
+                        <input type="text" id="titre" name="titre" placeholder="Saisissez le titre du film" required 
+                               class="form-input w-full px-4 py-2 rounded-md">
                     </div>
-                    <input type="file" name="image" accept="image/*" />
-                    <button type="submit">Ajouter le Film</button>
+                    
+                    <div>
+                        <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                        <textarea id="description" name="description" placeholder="Décrivez le film" required 
+                                  class="form-input w-full px-4 py-2 rounded-md h-32"></textarea>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="duree" class="block text-sm font-medium text-gray-700 mb-1">Durée (minutes)</label>
+                            <input type="number" id="duree" name="duree" placeholder="Ex: 120" required 
+                                   class="form-input w-full px-4 py-2 rounded-md">
+                        </div>
+                        
+                        <div>
+                            <label for="age_minimum" class="block text-sm font-medium text-gray-700 mb-1">Limite d'âge</label>
+                            <input type="number" id="age_minimum" name="age_minimum" placeholder="Ex: 12" required 
+                                   class="form-input w-full px-4 py-2 rounded-md">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label for="genre" class="block text-sm font-medium text-gray-700 mb-1">Genre</label>
+                        <select id="genre" name="genre" required class="form-input w-full px-4 py-2 rounded-md bg-white">
+                            <option value="" disabled selected>Sélectionnez un genre</option>
+                            <option value="action">Action</option>
+                            <option value="comedy">Comédie</option>
+                            <option value="drama">Drame</option>
+                            <option value="horror">Horreur</option>
+                            <option value="scifi">Science-Fiction</option>
+                            <option value="romance">Romance</option>
+                            <option value="thriller">Thriller</option>
+                            <option value="animation">Animation</option>
+                        </select>
+                    </div>
+                    
+                    <div class="border-t border-gray-200 pt-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Image du film</label>
+                        
+                        <div id="image-container" class="mb-3">
+                            <label class="block text-sm font-medium text-gray-500 mb-1">Image actuelle :</label>
+                            <div class="bg-gray-100 rounded-md p-2 inline-block">
+                                <img id="image-preview" src="/placeholder.svg" alt="" class="w-40 h-auto rounded-md object-cover">
+                            </div>
+                        </div>
+                        
+                        <div class="mt-2">
+                            <label for="image" class="block text-sm font-medium text-gray-700 mb-1">Changer l'image</label>
+                            <input type="file" id="image" name="image" accept="image/*" 
+                                   class="form-input w-full px-4 py-2 rounded-md bg-gray-50">
+                        </div>
+                    </div>
+                    
+                    <div class="pt-4">
+                        <button type="submit" class="btn-primary w-full py-3 px-4 rounded-md font-medium text-white">
+                            Ajouter le Film
+                        </button>
+                    </div>
                 </form>
-            </div>
-        </section>
+            </section>
 
-        <!-- Section 2 : Liste des films -->
-        <section id="film-list">
-            <h2>Liste des Films</h2>
-            <ul id="films"></ul>
-        </section>
-    </div>
+            <!-- Section 2 : Liste des films -->
+            <section id="film-list-section" class="bg-white rounded-lg shadow-md p-6 lg:col-span-2">
+                <h2 class="text-2xl font-bold mb-6 text-center text-gray-800 border-b pb-3">Liste des Films</h2>
+                
+                <div class="search-container mb-6">
+                    <div class="relative">
+                        <input type="text" id="search-films" placeholder="Rechercher un film..." 
+                               class="form-input w-full pl-10 pr-4 py-2 rounded-md">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="films-container max-h-[600px] overflow-y-auto pr-2">
+                    <!-- Grille de films: 3 par ligne sur desktop, 2 sur tablette, 1 sur mobile -->
+                    <div id="films" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <!-- Les films seront ajoutés ici dynamiquement par le JavaScript -->
+                    </div>
+                    
+                    <!-- Message "Aucun film" -->
+                    <div id="no-films" class="hidden text-center py-8 text-gray-500">
+                        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z"></path>
+                        </svg>
+                        <p class="mt-2">Aucun film disponible</p>
+                        <button id="add-first-film" class="mt-4 btn-primary py-2 px-4 rounded-md text-sm">
+                            Ajouter votre premier film
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="bg-gray-800 text-white py-4 mt-12">
+        <div class="container mx-auto px-4 text-center text-sm">
+            <p>&copy; 2023 Gestion des Films. Tous droits réservés.</p>
+        </div>
+    </footer>
 
     <script src="../js/film.js"></script>
+    
+
 </body>
 </html>

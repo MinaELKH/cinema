@@ -2,542 +2,116 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard | Cinéma Premium</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        :root {
-            --primary: #2c3e50;
-            --secondary: #e74c3c;
-            --gold: #f1c40f;
-            --light: #ecf0f1;
-            --dark: #1a252f;
-            --accent: #3498db;
-            --text: #333;
-            --text-light: #7f8c8d;
-            --success: #2ecc71;
-            --warning: #f39c12;
-            --danger: #e74c3c;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Montserrat', sans-serif;
-            background-color: #f5f7fa;
-            color: var(--text);
-            line-height: 1.6;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-        }
-
-        h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 2.2rem;
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        .date-display {
-            color: var(--text-light);
-            font-size: 1rem;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            transition: transform 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 5px;
-            height: 100%;
-        }
-
-        .stat-card.films::before {
-            background-color: var(--accent);
-        }
-
-        .stat-card.seances::before {
-            background-color: var(--warning);
-        }
-
-        .stat-card.reservations::before {
-            background-color: var(--success);
-        }
-
-        .stat-title {
-            font-size: 1rem;
-            color: var(--text-light);
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-        }
-
-        .stat-title i {
-            margin-right: 0.5rem;
-        }
-
-        .stat-value {
-            font-size: 2.2rem;
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        .stat-change {
-            font-size: 0.9rem;
-            margin-top: 0.5rem;
-        }
-
-        .stat-change.positive {
-            color: var(--success);
-        }
-
-        .stat-change.negative {
-            color: var(--danger);
-        }
-
-        .charts-row {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        @media (max-width: 1200px) {
-            .charts-row {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .chart-card {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-        }
-
-        .chart-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-
-        .chart-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: var(--primary);
-        }
-
-        .chart-container {
-            position: relative;
-            height: 300px;
-            width: 100%;
-        }
-
-        .tables-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-        }
-
-        @media (max-width: 900px) {
-            .tables-row {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .table-card {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
-        }
-
-        th {
-            text-align: left;
-            padding: 0.75rem;
-            background-color: #f8f9fa;
-            font-weight: 600;
-            color: var(--text-light);
-        }
-
-        td {
-            padding: 0.75rem;
-            border-bottom: 1px solid #eee;
-        }
-
-        tr:last-child td {
-            border-bottom: none;
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 0.3rem 0.6rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .badge-success {
-            background-color: rgba(46, 204, 113, 0.1);
-            color: var(--success);
-        }
-
-        .badge-warning {
-            background-color: rgba(243, 156, 18, 0.1);
-            color: var(--warning);
-        }
-
-        .badge-danger {
-            background-color: rgba(231, 76, 60, 0.1);
-            color: var(--danger);
-        }
-
-        .progress-container {
-            width: 100%;
-            height: 8px;
-            background-color: #f1f1f1;
-            border-radius: 4px;
-            margin-top: 0.5rem;
-        }
-
-        .progress-bar {
-            height: 100%;
-            border-radius: 4px;
-        }
-
-        .progress-high {
-            background-color: var(--success);
-            width: 75%;
-        }
-
-        .progress-medium {
-            background-color: var(--warning);
-            width: 50%;
-        }
-
-        .progress-low {
-            background-color: var(--danger);
-            width: 25%;
-        }
-    </style>
+    <title>Dashboard Cinéma</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <div class="container">
-        <header>
-            <h1>Tableau de Bord Cinéma</h1>
-            <div class="date-display">
-                <i class="far fa-calendar-alt"></i> <span id="current-date"></span>
-            </div>
-        </header>
+<body class="bg-gray-100 text-gray-900 p-6">
 
-        <div class="stats-grid" id="stats-container">
-            <!-- Les stats seront chargées ici par JavaScript -->
-        </div>
 
-        <div class="charts-row">
-            <div class="chart-card">
-                <div class="chart-header">
-                    <h3 class="chart-title">Revenus par Film</h3>
-                    <div class="chart-actions">
-                        <select id="revenue-period" class="chart-period-select">
-                            <option value="week">Cette semaine</option>
-                            <option value="month" selected>Ce mois</option>
-                            <option value="year">Cette année</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="chart-container">
-                    <canvas id="revenueChart"></canvas>
-                </div>
-            </div>
-
-            <div class="chart-card">
-                <div class="chart-header">
-                    <h3 class="chart-title">Taux d'Occupation</h3>
-                </div>
-                <div class="chart-container">
-                    <canvas id="occupationChart"></canvas>
-                </div>
+    <nav class="bg-white shadow mb-6">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-indigo-600">Cinéma Admin</h1>
+            <div class="space-x-4">
+                <a href="dashboard.html" class="text-gray-700 hover:text-indigo-600 font-medium">Dashboard</a>
+                <a href="manage_film.html" class="text-gray-700 hover:text-indigo-600 font-medium">Gérer Films</a>
+                <a href="manage_seance.html" class="text-gray-700 hover:text-indigo-600 font-medium">Gérer Séances</a>
+                <a href="manage_salle.html" class="text-gray-700 hover:text-indigo-600 font-medium">Gérer Salles</a>
             </div>
         </div>
+    </nav>
 
-        <div class="tables-row">
-            <div class="table-card">
-                <h3 class="chart-title">Films les Plus Populaires</h3>
-                <div class="table-responsive">
-                    <table id="popular-films-table">
-                        <thead>
-                            <tr>
-                                <th>Film</th>
-                                <th>Réservations</th>
-                                <th>Popularité</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Les données seront chargées ici par JavaScript -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
 
-            <div class="table-card">
-                <h3 class="chart-title">Taux d'Occupation par Séance</h3>
-                <div class="table-responsive">
-                    <table id="occupation-table">
-                        <thead>
-                            <tr>
-                                <th>Séance</th>
-                                <th>Taux</th>
-                                <th>Occupation</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Les données seront chargées ici par JavaScript -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+
+    <h1 class="text-3xl font-bold mb-6">Dashboard Cinéma</h1>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-white rounded-xl shadow p-4">
+            <h2 class="text-lg font-semibold">Total Films</h2>
+            <p id="totalFilms" class="text-2xl font-bold text-indigo-600">0</p>
+        </div>
+        <div class="bg-white rounded-xl shadow p-4">
+            <h2 class="text-lg font-semibold">Total Séances</h2>
+            <p id="totalSeances" class="text-2xl font-bold text-indigo-600">0</p>
+        </div>
+        <div class="bg-white rounded-xl shadow p-4">
+            <h2 class="text-lg font-semibold">Total Réservations</h2>
+            <p id="totalReservations" class="text-2xl font-bold text-indigo-600">0</p>
         </div>
     </div>
 
+    <div class="bg-white rounded-xl shadow p-4 mb-8">
+        <h2 class="text-lg font-semibold mb-2">Taux d’Occupation</h2>
+        <table class="w-full text-left border border-gray-200">
+            <thead>
+                <tr class="bg-gray-100">
+                    <th class="p-2 border">Film</th>
+                    <th class="p-2 border">Places Réservées</th>
+                    <th class="p-2 border">Taux d’Occupation (%)</th>
+                </tr>
+            </thead>
+            <tbody id="tauxOccupationBody"></tbody>
+        </table>
+    </div>
+
+    <div class="bg-white rounded-xl shadow p-4 mb-8">
+        <h2 class="text-lg font-semibold mb-2">Revenus par Film</h2>
+        <table class="w-full text-left border border-gray-200">
+            <thead>
+                <tr class="bg-gray-100">
+                    <th class="p-2 border">Film</th>
+                    <th class="p-2 border">Tickets Vendus</th>
+                    <th class="p-2 border">Revenus (€)</th>
+                </tr>
+            </thead>
+            <tbody id="revenusBody"></tbody>
+        </table>
+    </div>
+
+    <div class="bg-white rounded-xl shadow p-4">
+        <h2 class="text-lg font-semibold mb-2">Top Films Populaires</h2>
+        <ul id="filmsPopulaires" class="list-disc pl-6"></ul>
+    </div>
+
     <script>
-        // Afficher la date actuelle
-        const now = new Date();
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        document.getElementById('current-date').textContent = now.toLocaleDateString('fr-FR', options);
+        fetch('http://127.0.0.1:8000/api/admin/dashboard')
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('totalFilms').textContent = data.stats.total_films;
+                document.getElementById('totalSeances').textContent = data.stats.total_seances;
+                document.getElementById('totalReservations').textContent = data.stats.total_reservations;
 
-        // Charger les données du dashboard
-        document.addEventListener('DOMContentLoaded', function() {
-            fetchDashboardData();
-        });
-
-        function fetchDashboardData() {
-            fetch('api/admin/dashboard')
-                .then(response => response.json())
-                .then(data => {
-                    updateStats(data.stats);
-                    renderRevenueChart(data.revenusParFilm);
-                    renderOccupationChart(data.tauxOccupation);
-                    renderPopularFilmsTable(data.filmsPopulaires);
-                    renderOccupationTable(data.tauxOccupation);
-                })
-                .catch(error => {
-                    console.error('Erreur lors du chargement des données:', error);
+                const tauxBody = document.getElementById('tauxOccupationBody');
+                data.tauxOccupation.forEach(e => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="p-2 border">${e.titre}</td>
+                        <td class="p-2 border">${e.places_reservees}</td>
+                        <td class="p-2 border">${parseFloat(e.taux_occupation).toFixed(2)}%</td>
+                    `;
+                    tauxBody.appendChild(row);
                 });
-        }
 
-        function updateStats(stats) {
-            const statsContainer = document.getElementById('stats-container');
-            statsContainer.innerHTML = `
-                <div class="stat-card films">
-                    <div class="stat-title">
-                        <i class="fas fa-film"></i> Films
-                    </div>
-                    <div class="stat-value">${stats.total_films}</div>
-                    <div class="stat-change positive">
-                        <i class="fas fa-arrow-up"></i> +2.5% vs mois dernier
-                    </div>
-                </div>
-                <div class="stat-card seances">
-                    <div class="stat-title">
-                        <i class="fas fa-calendar-alt"></i> Séances
-                    </div>
-                    <div class="stat-value">${stats.total_seances}</div>
-                    <div class="stat-change positive">
-                        <i class="fas fa-arrow-up"></i> +7.8% vs semaine dernière
-                    </div>
-                </div>
-                <div class="stat-card reservations">
-                    <div class="stat-title">
-                        <i class="fas fa-ticket-alt"></i> Réservations
-                    </div>
-                    <div class="stat-value">${stats.total_reservations}</div>
-                    <div class="stat-change positive">
-                        <i class="fas fa-arrow-up"></i> +12.3% vs hier
-                    </div>
-                </div>
-            `;
-        }
+                const revenusBody = document.getElementById('revenusBody');
+                data.revenusParFilm.forEach(e => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="p-2 border">${e.titre}</td>
+                        <td class="p-2 border">${e.tickets_vendus}</td>
+                        <td class="p-2 border">${parseFloat(e.revenus_total).toFixed(2)} €</td>
+                    `;
+                    revenusBody.appendChild(row);
+                });
 
-        function renderRevenueChart(data) {
-            const ctx = document.getElementById('revenueChart').getContext('2d');
-            const labels = data.map(item => item.titre);
-            const revenueData = data.map(item => item.revenus_total);
-
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Revenus (DH)',
-                        data: revenueData,
-                        backgroundColor: '#3498db',
-                        borderColor: '#2980b9',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: {
-                                color: 'rgba(0, 0, 0, 0.05)'
-                            }
-                        },
-                        x: {
-                            grid: {
-                                display: false
-                            }
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    }
-                }
+                const list = document.getElementById('filmsPopulaires');
+                data.filmsPopulaires.forEach(film => {
+                    const li = document.createElement('li');
+                    li.textContent = `${film.titre} (${film.nombre_reservations} réservations)`;
+                    list.appendChild(li);
+                });
+            })
+            .catch(err => {
+                console.error('Erreur lors de la récupération des stats :', err);
             });
-        }
-
-        function renderOccupationChart(data) {
-            const ctx = document.getElementById('occupationChart').getContext('2d');
-            const labels = data.map(item => item.titre);
-            const occupationData = data.map(item => parseFloat(item.taux_occupation).toFixed(2));
-
-            new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        data: occupationData,
-                        backgroundColor: [
-                            '#2ecc71',
-                            '#3498db',
-                            '#9b59b6',
-                            '#f1c40f',
-                            '#e74c3c',
-                            '#1abc9c'
-                        ],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    cutout: '70%',
-                    plugins: {
-                        legend: {
-                            position: 'right'
-                        }
-                    }
-                }
-            });
-        }
-
-        function renderPopularFilmsTable(data) {
-            const tableBody = document.querySelector('#popular-films-table tbody');
-            tableBody.innerHTML = '';
-
-            data.forEach((film, index) => {
-                const row = document.createElement('tr');
-                
-                let popularityBadge = '';
-                if (index === 0) {
-                    popularityBadge = '<span class="badge badge-success"><i class="fas fa-crown"></i> Top 1</span>';
-                } else if (index < 3) {
-                    popularityBadge = '<span class="badge badge-warning">Populaire</span>';
-                } else {
-                    popularityBadge = '<span class="badge">Standard</span>';
-                }
-
-                row.innerHTML = `
-                    <td>${film.titre}</td>
-                    <td>${film.nombre_reservations}</td>
-                    <td>${popularityBadge}</td>
-                `;
-                tableBody.appendChild(row);
-            });
-        }
-
-        function renderOccupationTable(data) {
-            const tableBody = document.querySelector('#occupation-table tbody');
-            tableBody.innerHTML = '';
-
-            data.forEach(item => {
-                const taux = parseFloat(item.taux_occupation).toFixed(2);
-                
-                let progressClass = '';
-                if (taux > 70) {
-                    progressClass = 'progress-high';
-                } else if (taux > 40) {
-                    progressClass = 'progress-medium';
-                } else {
-                    progressClass = 'progress-low';
-                }
-
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${item.titre} (${item.places_reservees}/${item.capacite})</td>
-                    <td>${taux}%</td>
-                    <td>
-                        <div class="progress-container">
-                            <div class="progress-bar ${progressClass}"></div>
-                        </div>
-                    </td>
-                `;
-                tableBody.appendChild(row);
-            });
-        }
     </script>
 </body>
 </html>

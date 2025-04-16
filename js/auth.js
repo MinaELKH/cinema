@@ -30,7 +30,7 @@ loginForm.addEventListener("submit", async (e) => {
             if (data.user.role === "admin") {
                 window.location.href = "dashboard.html";
             } else if (data.user.role === "spectateur") {
-                window.location.href = "reservation.html";
+                window.location.href = "films.html";
             } else {
                 window.location.href = "index.html"; // rôle inconnu ou visiteur
             }
@@ -70,7 +70,7 @@ registerForm.addEventListener("submit", async (e) => {
             messageDiv.classList.add("text-green-600");
             messageDiv.textContent = "Inscription réussie ✅";
 
-            window.location.href = "reservation.html";
+            window.location.href = "films.html";
         } else {
             throw new Error(data.message || "Erreur d'inscription");
         }

@@ -1,0 +1,304 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cinéma Premium | Films</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #1a252f;
+            --accent: #3498db;
+            --text: #333;
+            --text-light: #7f8c8d;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f5f5f5;
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: var(--secondary);
+        }
+
+        h2 {
+            font-size: 1.2rem;
+            font-weight: 400;
+            color: var(--text-light);
+        }
+
+        .films-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .film-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+        }
+
+        .film-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+        }
+
+        .film-poster {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .film-content {
+            padding: 1.5rem;
+        }
+
+        .film-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .film-description {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .film-btn {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent);
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            text-align: center;
+        }
+
+        .film-btn:hover {
+            background-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .film-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: var(--secondary);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .films-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Notre Collection Exclusive</h1>
+            <h2>Découvrez les chefs-d'œuvre du cinéma contemporain</h2>
+        </header>
+
+        <div class="films-grid" id="films"></div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            fetchFilms();
+        });
+
+        const token = localStorage.getItem("token");
+
+        function fetchFilms() {
+            fetch('http://127.0.0.1:8000/api/films', {
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                }
+            })
+            .then(response => response.json())
+            .then(films => {
+                const filmsContainer = document.getElementById('films');
+                filmsContainer.innerHTML = '';
+
+                films.forEach(film => {
+                    const filmElement = document.createElement('div');
+                    filmElement.classList.add('film-card');
+                    filmElement.innerHTML = `
+                        <div class="film-badge">Nouveau</div>
+                        <img class="film-poster" src="http://127.0.0.1:8000/storage/films/${film.image}" alt="${film.titre}">
+                        <div class="film-content">
+                            <h3 class="film-title">${film.titre}</h3>
+                            <p class="film-description">${film.description}</p>
+                            <button class="film-btn detailSeance-btn" data-id="${film.id}">Voir les séances</button>
+                        </div>
+                    `;
+                    filmsContainer.appendChild(filmElement);
+                });
+
+                const detailButtons = document.querySelectorAll('.detailSeance-btn');
+                detailButtons.forEach(button => {
+                    button.addEventListener('click', function () {
+                        const filmId = this.getAttribute('data-id');
+                        window.location.href = `seance.html?film_id=${filmId}`;
+                    });
+                });
+            })
+            .catch(error => console.error('Erreur lors du chargement des films:', error));
+        }
+    </script>
+</body>
+</html>
+
+<!-- <!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Films</title>
+    <style>
+        .film {
+            background: #eee;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .film img {
+            width: 200px;
+            height: auto;
+            display: block;
+            margin-top: 10px;
+            border-radius: 8px;
+        }
+
+        .film button {
+            margin-top: 1rem;
+            padding: 0.5rem 1rem;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Liste des Films</h1>
+    <div id="films"></div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            fetchFilms();
+        });
+
+        const token = localStorage.getItem("token");
+
+        function fetchFilms() {
+            fetch('http://127.0.0.1:8000/api/films', {
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                }
+            })
+            .then(response => response.json())
+            .then(films => {
+                const filmsContainer = document.getElementById('films');
+                filmsContainer.innerHTML = '';
+
+                films.forEach(film => {
+                    const filmElement = document.createElement('div');
+                    filmElement.classList.add('film');
+                    filmElement.innerHTML = `
+                        <h3>${film.titre}</h3>
+                        <p>${film.description}</p>
+                        <img src="http://127.0.0.1:8000/storage/films/${film.image}" />
+                        <button class="detailSeance-btn" data-id="${film.id}">Séances</button>
+                    `;
+                    filmsContainer.appendChild(filmElement);
+                });
+
+                const detailButtons = document.querySelectorAll('.detailSeance-btn');
+                detailButtons.forEach(button => {
+                    button.addEventListener('click', function () {
+                        const filmId = this.getAttribute('data-id');
+                        window.location.href = `seance.html?film_id=${filmId}`;
+                    });
+                });
+            })
+            .catch(error => console.error('Erreur lors du chargement des films:', error));
+        }
+    </script>
+</body>
+</html> -->

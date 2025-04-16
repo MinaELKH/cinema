@@ -5,8 +5,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const API_URL = 'http://127.0.0.1:8000/api/salles';
 
+    const token = localStorage.getItem("token");
+
+    const authHeaders = {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`,
+    };
+
     function fetchSalles() {
-        fetch(API_URL)
+        fetch(API_URL, { headers: authHeaders })
             .then(res => res.json())
             .then(salles => {
                 const container = document.getElementById("salles");
@@ -50,10 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         fetch(url, {
             method: method,
-            headers: {
-                "Content-Type": "application/json",
-                Accept: "application/json",
-            },
+            headers: authHeaders,
             body: JSON.stringify(data),
         })
             .then(res => res.json())
@@ -67,19 +72,17 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     function editSalle(id) {
-        fetch(`${API_URL}`)
+        fetch(`${API_URL}/${id}`, { headers: authHeaders })
             .then(res => res.json())
-            .then(salles => {
-                const salle = salles.find(s => s.id == id);
-                if (!salle) return;
-
+            .then(salle => {
                 salleIdField.value = salle.id;
                 document.getElementById("nom").value = salle.nom;
                 document.getElementById("capacite").value = salle.capacite;
                 document.getElementById("type").value = salle.type;
 
                 formTitle.textContent = "Modifier Salle";
-            });
+            })
+            .catch(err => console.error("Erreur chargement salle :", err));
     }
 
     function deleteSalle(id) {
@@ -87,7 +90,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         fetch(`${API_URL}/${id}`, {
             method: "DELETE",
-            headers: { Accept: "application/json" }
+            headers: authHeaders,
         })
             .then(() => fetchSalles())
             .catch(err => console.error("Erreur suppression salle :", err));

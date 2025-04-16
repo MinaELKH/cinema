@@ -1,0 +1,40 @@
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const token = localStorage.getItem("token");
+        const urlParams = new URLSearchParams(window.location.search);
+        const reservationId = urlParams.get("reservation_id");
+
+        if (!reservationId) {
+            alert("Aucune réservation trouvée !");
+            return;
+        }
+
+        // Appel à l'API pour générer le ticket PDF
+        fetch(`http://127.0.0.1:8000/api/generate-ticket/${reservationId}`, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/pdf',
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Erreur lors de la génération du ticket");
+            }
+            return response.blob();
+        })
+        .then(blob => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `ticket-${reservationId}.pdf`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+        })
+        .catch(error => {
+            console.error("Erreur ticket :", error.message);
+            alert("Erreur lors du téléchargement du ticket !");
+        });
+    });
+</script>

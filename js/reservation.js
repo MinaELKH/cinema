@@ -1,81 +1,86 @@
-document.addEventListener("DOMContentLoaded", function () {
-    fetchSeances();
-});
+// document.addEventListener("DOMContentLoaded", function () {
+//    // fetchSeances();
+//    fetchFilms() ; 
+// });
 
-const token = localStorage.getItem("token");
+// const token = localStorage.getItem("token");
 
-function fetchSeances() {
-    fetch('http://127.0.0.1:8000/api/seances/films')
-        .then(response => response.json())
-        .then(seances => {
-            const filmsContainer = document.getElementById('films'); // Utilise la même div
-            filmsContainer.innerHTML = "";
 
-            seances.forEach(seance => {
-                //console.log(seance);
-                const seanceElement = document.createElement('li');
-                seanceElement.classList.add('film');
+// function fetchFilms() {
+//     fetch('http://127.0.0.1:8000/api/films', {
+//         headers: {
+//             "Authorization": `Bearer ${token}`,
+//             "Content-Type": "application/json",
+//         }
+//     })
+//     .then(response => response.json())
+//     .then(films => {
+//         const filmsContainer = document.getElementById('films');
+//         filmsContainer.innerHTML = ''; // Vide la liste avant de la remplir
 
-                const startTime = new Date(seance.start_time).toLocaleString();
+//         films.forEach(film => {
+//             const filmElement = document.createElement('div');
+//             filmElement.classList.add('film');
+//             filmElement.innerHTML = `
+//                 <h3>${film.titre}</h3>
+//                 <p>${film.description}</p>
+//                 <img src="http://127.0.0.1:8000/storage/films/${film.image}" />
+//                 <button class="detailSeance-btn" data-id="${film.id}">Seances</button>
+               
+//             `;
+//             filmsContainer.appendChild(filmElement);
+//         });
 
-                seanceElement.innerHTML = `
-                    <h3 class="text-xl font-semibold">${seance.titre}</h3>
-                    <p class="text-gray-600">${seance.description}</p>
-                    <img src="http://127.0.0.1:8000/storage/films/${seance.image}" alt="${seance.titre}" class="w-52 my-2">
-                    <p><strong>Salle :</strong>${seance.nom} (${seance.type})</p>
-                    <p><strong>Date :</strong> ${startTime}</p>
-                    <p><strong>Langue :</strong> ${seance.langue}</p>
-                     <p><strong class='red-500'>numero seance :</strong> ${seance.id}</p>
-                    <p><strong>Prix :</strong> ${seance.prix} DH</p>
-                    <button class="reserve-btn bg-pink-500 text-white px-4 py-2 mt-2 rounded" data-seance-id="${seance.id}">Réserver</button>
-                `;
-                filmsContainer.appendChild(seanceElement);
-            });
+     
+//         const DetailButtons = document.querySelectorAll('.detailSeance-btn');
+//         DetailButtons.forEach(button => {
+//             button.addEventListener('click', function () {
+//                 const filmId = button.getAttribute('data-id');
+//                 showSeance(filmId);
+//             });
+//         });
+        
+//     })
+//     .catch(error => console.error('Erreur lors du chargement des films:', error));
+// }
 
-            const reserveButtons = document.querySelectorAll('.reserve-btn');
-            reserveButtons.forEach(button => {
-                button.addEventListener('click', function () {
-                    const seanceId = button.getAttribute('data-seance-id');
-                    choisirSiegeEtReserver(seanceId);
-                });
-            });
-        })
-        .catch(error => {
-            console.error("Erreur lors du chargement des séances :", error);
-        });
-}
+// function showSeance(filmId){
+//     // Redirection vers la page des séances avec film_id comme paramètre
+//     window.location.href = `seances.html?film_id=${filmId}`;
+// }
 
-function choisirSiegeEtReserver(seanceId) {
-    const siegeId = prompt("Entrez l'ID du siège que vous souhaitez réserver :");
-    if (siegeId) {
-        reserver(seanceId, siegeId);
-    }
-}
 
-function reserver(seanceId, siegeId) {
-    fetch("http://127.0.0.1:8000/api/reservations", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-            seance_id: seanceId,
-            siege_id: siegeId
-        })
-    })
-    .then(response => {
-        if (!response.ok) {
-            return response.json().then(err => { throw err; });
-        }
-        return response.json();
-    })
-    .then(data => {
-        alert("Réservation effectuée avec succès !");
-        console.log(data);
-    })
-    .catch(error => {
-        console.error("Erreur lors de la réservation :", error);
-        alert("Erreur : " + (error.message || "Impossible de réserver."));
-    });
-}
+// function choisirSiegeEtReserver(seanceId) {
+//     const siegeId = prompt("Entrez l'ID du siège que vous souhaitez réserver :");
+//     if (siegeId) {
+//         reserver(seanceId, siegeId);
+//     }
+// }
+
+// function reserver(seanceId, siegeId) {
+//     fetch("http://127.0.0.1:8000/api/reservations", {
+//         method: "POST",
+//         headers: {
+//             "Content-Type": "application/json",
+//             "Authorization": `Bearer ${token}`,
+//         },
+//         body: JSON.stringify({
+//             seance_id: seanceId,
+//             siege_id: siegeId
+//         })
+//     })
+//     .then(response => {
+//         if (!response.ok) {
+//             return response.json().then(err => { throw err; });
+//         }
+//         return response.json();
+//     })
+//     .then(data => {
+//         alert("Réservation effectuée avec succès !");
+//         console.log(data);
+//     })
+//     .catch(error => {
+//         console.error("Erreur lors de la réservation :", error);
+//         alert("Erreur : " + (error.message || "Impossible de réserver."));
+//     });
+// }
